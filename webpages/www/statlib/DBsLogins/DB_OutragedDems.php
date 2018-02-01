@@ -1,4 +1,6 @@
 <?php
+// Make sure to include a .gitignore as to not commit your database password.
+
 $databasename = "<DATABASE NAME>";
 $databaseserver = "<DATABASE HOST>";
 $databaseport = 3306;
