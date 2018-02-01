@@ -1,0 +1,31 @@
+h1 { 
+    color: red;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+   border: 1px solid black;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+td {
+    vertical-align: bottom;
+}
+
+th, td {
+    height: 10px;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid black;
+}
+
+tr:hover {background-color: gray}
+tr:nth-child(even) {background-color: #f2f2f2}
