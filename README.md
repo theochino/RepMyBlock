@@ -1,0 +1,14 @@
+# OutragedDems
+Website to put an end to the Society of St. Tammany in New York City.
+
+Great history: https://en.wikipedia.org/wiki/Tammany_Hall
+Martin Scorsese made a movie that illustrated the power of the Society of St. Tammany while everyone was fighting: https://youtu.be/NUco72Sxokk
+
+200 years laters, we are still fighting while the party bosses pick candidates. 
+https://www.nytimes.com/2017/09/18/nyregion/new-york-politics-party-bosses.html
+
+I am one of them and I don't like it, so this code is about breaking Aaron Burt shenanigans. 
+https://youtu.be/cyO9kReAcio
+
+Theo Chino
+https://youtu.be/WXRd6lF3Ix4
