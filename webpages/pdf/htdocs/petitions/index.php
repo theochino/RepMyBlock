@@ -1,6 +1,6 @@
 <?php
-	date_default_timezone_set('America/New_York'); 
-	
+	//date_default_timezone_set('America/New_York'); 
+		
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/funcs/general.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/db/db_OutragedDems.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . '/../libs/funcs/petition_class.php';
@@ -25,23 +25,25 @@
 				// We'll need to change that later.
 				if ( $var["Raw_Voter_ID"] == $RawVoterID) {
 					$pdf->Candidate[$TotalCandidates] = $var["Raw_Voter_FirstName"] . " " . $var["Raw_Voter_MiddleName"] . " " . 
-																							$var["Raw_Voter_LastName"] . " " . $var["Raw_Voter_Suffix"];	
+																							Redact($var["Raw_Voter_LastName"]) . " " . $var["Raw_Voter_Suffix"];	
 					$pdf->RunningFor[$TotalCandidates] = "Member of the Democratic County Committee from the " . $ED . "th " .
 																								"Election District in the " . $AD . "st Assembly District " . 
 																								"Queens County, New York State";
-					$pdf->Residence[$TotalCandidates] = $var["Raw_Voter_ResHouseNumber"] . " " . $var["Raw_Voter_ResStreetName"] . "\n" .
+					$pdf->Residence[$TotalCandidates] = Redact($var["Raw_Voter_ResHouseNumber"]) . " " . $var["Raw_Voter_ResStreetName"] . "\n" .
 											$var["Raw_Voter_ResCity"] . ", NY " . $var["Raw_Voter_ResZip"];			
 																			
 					// In this case the witness is the candidate.
 					$pdf->WitnessName = $pdf->Candidate[$TotalCandidates];
-					$pdf->WitnessResidence = $pdf->Residence[$TotalCandidates];
+					$pdf->WitnessResidence = Redact($var["Raw_Voter_ResHouseNumber"]) . " " . $var["Raw_Voter_ResStreetName"] . ", " .
+											$var["Raw_Voter_ResCity"] . ", NY " . $var["Raw_Voter_ResZip"];			
+
 					
 					$TotalCandidates++;	
 				}
 				
 				$Name[$i] = $var["Raw_Voter_FirstName"] . " " . $var["Raw_Voter_MiddleName"] . " " . 
-										$var["Raw_Voter_LastName"] . " " . $var["Raw_Voter_Suffix"];	 		
-				$Address[$i] = $var["Raw_Voter_ResHouseNumber"] . " " . $var["Raw_Voter_ResStreetName"] . "\n" .
+										Redact($var["Raw_Voter_LastName"]) . " " . $var["Raw_Voter_Suffix"];	 		
+				$Address[$i] = Redact($var["Raw_Voter_ResHouseNumber"]) . " " . $var["Raw_Voter_ResStreetName"] . "\n" .
 											$var["Raw_Voter_ResCity"] . ", NY " . $var["Raw_Voter_ResZip"] . "\n" .
 											"County of New York";
 				$County[$i] = "New York";
@@ -63,8 +65,13 @@
 	$pdf->county = "New York";
 	$pdf->party = "Democratic";
 	$pdf->ElectionDate = "September 12th, 2018";
-	if ($pdf->NumberOfCandidates > 1) { $pdf->PluralCandidates = "s"; 
-	} else { $pdf->PluralAcandidates = "a";	}
+	if ($pdf->NumberOfCandidates > 1) { 
+		$pdf->PluralCandidates = "s"; 
+		$pdf->PluralAcandidates = "";	
+	} else { 
+		$pdf->PluralCandidates = "";
+		$pdf->PluralAcandidates = "a";	
+	}
 	$pdf->RunningForHeading = "PARTY POSITION" . strtoupper($pdf->PluralCandidates);
 	$pdf->CandidateNomination = "nomination of such party for public office ". $pdf->PluralCandidates;
 	// Add or the if both.	
@@ -126,4 +133,11 @@
     
 	$pdf->Output("I", "OutragedDems-Petitions.pdf");
 
+
+function Redact ($string) {
+	return str_repeat("X", strlen($string)); ;
+	return $string;
+}
+
 ?>
+
