@@ -10,7 +10,7 @@ class db {
     $this->type = $database_type;
   }
 
-  function open($database, $host, $port, $user, $password, $sslkeys, $DebugInfo) {
+   function open($database, $host, $port, $user, $password, $sslkeys, $DebugInfo) {
 
     if(empty($user)) {
       // $this->connect_id = mysql_connect(); - Deprecated
@@ -18,38 +18,33 @@ class db {
 			// Put a nagios trigger here
 			exit();
     } else {
-      // $this->connect_id = mysql_connect($host, $user, $password); - Deprecated
-      try {
-      	
-      	if (! empty ($sslkeys["srvkey"])) {
-		     	$this->pdo = new PDO($this->type . ":host=$host;port=$port;dbname=$database", $user, $password, array(
-			  		PDO::MYSQL_ATTR_SSL_KEY   => $sslkeys["srvkey"],
-			  		PDO::MYSQL_ATTR_SSL_CERT	=> $sslkeys["srvcert"],
-			  		PDO::MYSQL_ATTR_SSL_CA    => $sslkeys["srvca"]
-			  	));
-			  } else {
-			  		$this->pdo = new PDO($this->type . ":host=$host;port=$port;dbname=$database", $user, $password, array(
-			  		#PDO::MYSQL_ATTR_SSL_KEY   => $sslkeys["srvkey"],
-			  		#PDO::MYSQL_ATTR_SSL_CERT	=> $sslkeys["srvcert"],
-			  		#PDO::MYSQL_ATTR_SSL_CA    => $sslkeys["srvca"]
-			  	));
-			  }
-			  
-			  $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		  	return $this->pdo;
-	     	
+	    // $this->connect_id = mysql_connect($host, $user, $password); - Deprecated
+	    try {     	
+		   	if (! empty ($sslkeys["srvkey"])) {
+		   		$MYSQLOPTIONS = array(
+		   			PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+		  			PDO::MYSQL_ATTR_SSL_KEY   => $sslkeys["srvkey"],
+		  			PDO::MYSQL_ATTR_SSL_CERT	=> $sslkeys["srvcert"],
+		  			PDO::MYSQL_ATTR_SSL_CA    => $sslkeys["srvca"]
+			  	);
+			  }       		
+		   	$this->pdo = new PDO($this->type . ":host=$host;port=$port;dbname=$database", $user, $password, $MYSQLOPTIONS);
+				  
+				$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				return $this->pdo;
+	    	
 			}	catch( PDOException $e ) {
 				$this->SaveError ($e->getMessage(), $sql, $sql_vars, $DebugInfo);
-	    	if ( $DebugInfo["Flag"] > 0 ) {
+	   		if ( $DebugInfo["Flag"] > 0 ) {
 					echo "Failed to get DB handle: " . $e->getMessage() . "\n";
 				} else { 
 					echo "Error with the Database. Admin already notified. Please try in one hour.<BR>";
 				}
-	    	exit;
+	   		exit;
 			}
-    }
+		}
   }
-  
+ 
   function query($sql = "", $sql_vars = "", $return = 0, $DebugInfo = "") { 		
  		unset ($event_rows);
  		if ( $DebugInfo["Flag"] > 0 ) {
