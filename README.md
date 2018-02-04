@@ -7,7 +7,7 @@ Martin Scorsese made a movie that illustrated the power of the Society of St. Ta
 200 years laters, we are still fighting while the party bosses pick candidates.<BR> 
 https://www.nytimes.com/2017/09/18/nyregion/new-york-politics-party-bosses.html
 
-I am one of them and I don't like it, so this code is about breaking Aaron Burt shenanigans.<BR>
+I am one of them and I don't like it, so this code is about breaking Aaron Burr shenanigans.<BR>
 https://youtu.be/cyO9kReAcio
 
 Theo Chino<BR>
