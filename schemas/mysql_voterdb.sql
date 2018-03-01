@@ -31,7 +31,7 @@ CREATE TABLE `Candidate` (
   `Candidate_DispResidence` varchar(256) DEFAULT NULL,
   `CandidateAptment_ID` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`Candidate_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `CandidatePetition` (
   `CandidatePetition_VoterCounty` varchar(100) DEFAULT NULL,
   `CandidatePetition_SignedDate` date DEFAULT NULL,
   PRIMARY KEY (`CandidatePetition_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13287 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,7 +119,7 @@ CREATE TABLE `Cordinate` (
   `Cordinate_Longitude` decimal(20,15) DEFAULT NULL,
   PRIMARY KEY (`Cordinate_ID`),
   KEY `Cordinate_LatLong_IDX` (`Cordinate_Latitude`,`Cordinate_Longitude`)
-) ENGINE=InnoDB AUTO_INCREMENT=859529 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,7 +138,7 @@ CREATE TABLE `CordinateBox` (
   `CordinateBox_ValidStartDate` date DEFAULT NULL,
   `CordinateBox_ValidEndDate` date DEFAULT NULL,
   PRIMARY KEY (`CordinateBox_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5390 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `DataAddress` (
   KEY `DataAddressZipcodes_IDX` (`DataAddress_zipcode`),
   KEY `DataAddressMost` (`DataAddress_HouseNumber`,`DataAddress_FracAddress`,`DataAddress_PreStreet`,`DataStreet_ID`,`DataAddress_PostStreet`,`DataCity_ID`,`DataState_ID`,`DataAddress_zipcode`),
   KEY `DataAddressCordinate_IDX` (`Cordinate_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6208644 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,7 +195,7 @@ CREATE TABLE `DataCity` (
   `DataCity_Name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`DataCity_ID`),
   KEY `DataCityName_IDX` (`DataCity_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2223 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,7 +214,7 @@ CREATE TABLE `DataHouse` (
   KEY `DataHouseDataAddress_IDX` (`DataAddress_ID`),
   KEY `DataHouseDataAddressApt_IDX` (`DataAddress_ID`,`DataHouse_Apt`),
   KEY `DataHouse_BIN_IDX` (`DataHouse_BIN`)
-) ENGINE=InnoDB AUTO_INCREMENT=10440151 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE `DataState` (
   `DataState_Name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`DataState_ID`),
   KEY `DataStateName_IDX` (`DataState_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,7 +244,7 @@ CREATE TABLE `DataStreet` (
   `DataStreet_Name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`DataStreet_ID`),
   KEY `DataStreetName_IDX` (`DataStreet_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=102559 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -259,7 +259,7 @@ CREATE TABLE `Elections` (
   `Elections_Text` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`Elections_ID`),
   KEY `Elections_ID_IDX` (`Elections_Text`)
-) ENGINE=InnoDB AUTO_INCREMENT=1242 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +294,7 @@ CREATE TABLE `FacebookMessaging` (
   `FaceBookMessaging_Text` text,
   `FaceBookMessaging_Tampon` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`FacebookMessaging_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=344 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -310,7 +310,7 @@ CREATE TABLE `GeoCord` (
   `GeoCord_Long` decimal(18,14) DEFAULT NULL,
   PRIMARY KEY (`GeoCord_ID`),
   KEY `GeoCord_LatLong_IDX` (`GeoCord_Lat`,`GeoCord_Long`)
-) ENGINE=InnoDB AUTO_INCREMENT=633390 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -328,7 +328,7 @@ CREATE TABLE `GeoDesc` (
   PRIMARY KEY (`GeoDesc_ID`),
   KEY `GeoDesc_Abbrev_IDX` (`GeoDesc_Abbrev`),
   KEY `GeoDesc_Name_IDX` (`GeoDesc_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5938 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -394,7 +394,7 @@ CREATE TABLE `GeoGroup` (
   `GeoGroup_ValidFrom` date DEFAULT NULL,
   `GeoGroup_ValidTo` date DEFAULT NULL,
   PRIMARY KEY (`GeoGroup_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -473,7 +473,7 @@ CREATE TABLE `Raw_Voter_20151215` (
   PRIMARY KEY (`Raw_Voter_ID`),
   KEY `Raw_Voter_20151215_LastName_IDX` (`Raw_Voter_LastName`),
   KEY `Raw_Voter_20151215_UniqNYSVoterID_IDX` (`Raw_Voter_UniqNYSVoterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=16145645 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -538,7 +538,7 @@ CREATE TABLE `Raw_Voter_20170515` (
   KEY `Raw_Voter_20170515_Party_Status` (`Raw_Voter_Status`,`Raw_Voter_EnrollPolParty`),
   KEY `Raw_Voter_20170515_Party_Status_Assembly_Election` (`Raw_Voter_Status`,`Raw_Voter_EnrollPolParty`,`Raw_Voter_ElectDistr`),
   KEY `Raw_Voter_20170515_Party_Status_ADED_IDX` (`Raw_Voter_Status`,`Raw_Voter_EnrollPolParty`,`Raw_Voter_ElectDistr`,`Raw_Voter_AssemblyDistr`)
-) ENGINE=InnoDB AUTO_INCREMENT=17461513 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -552,7 +552,7 @@ CREATE TABLE `Raw_Voter_Dates` (
   `Raw_Voter_Dates_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Raw_Voter_Dates_Date` char(8) DEFAULT NULL,
   PRIMARY KEY (`Raw_Voter_Dates_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -569,7 +569,7 @@ CREATE TABLE `UserBinding` (
   `UserDecisionTree` int(10) unsigned DEFAULT NULL,
   `VotersIndexes_ID` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`UserBinding_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -604,7 +604,7 @@ CREATE TABLE `UserProgress` (
   `UserProgress_Address_Line4` varchar(256) DEFAULT NULL,
   `UserProgress_LastInteraction` datetime DEFAULT NULL,
   PRIMARY KEY (`UserProgress_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -637,7 +637,7 @@ CREATE TABLE `VotersFirstName` (
   `VotersFirstName_Text` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`VotersFirstName_ID`),
   KEY `VotersFirstName_Text_IDX` (`VotersFirstName_Text`)
-) ENGINE=InnoDB AUTO_INCREMENT=587373 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -659,7 +659,7 @@ CREATE TABLE `VotersIndexes` (
   KEY `VotersIndexes_VotersFirstName_IDX` (`VotersFirstName_ID`),
   KEY `VotersIndexes_VotersMiddleName_IDX` (`VotersMiddleName_ID`),
   KEY `VotersIndexes_VotersLastName_IDX` (`VotersLastName_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15563384 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -674,7 +674,7 @@ CREATE TABLE `VotersLastName` (
   `VotersLastName_Text` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`VotersLastName_ID`),
   KEY `VotersLastName_Text_IDX` (`VotersLastName_Text`)
-) ENGINE=InnoDB AUTO_INCREMENT=1017173 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -689,7 +689,7 @@ CREATE TABLE `VotersMiddleName` (
   `VotersMiddleName_Text` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`VotersMiddleName_ID`),
   KEY `VotersMiddleName_Text_IDX` (`VotersMiddleName_Text`)
-) ENGINE=InnoDB AUTO_INCREMENT=63090 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
