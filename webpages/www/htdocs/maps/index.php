@@ -1,24 +1,22 @@
-<?php 
-	if ( ! empty ($_POST["SubmitEDAD"])) {
-		$URL = "getedinfo.php?ED=" . $_POST["ED"] . "&AD=" . $_POST["AD"];
-		header("Location: $URL");
-		exit();
-	}
-?>
-<IMG SRC="https://www.outrageddems.nyc/word/wp-content/uploads/2018/01/cropped-OD-Logo_3.png">
+<HTML>
+<link rel="stylesheet" type="text/css" href="maps.css">
 
-<BR><BR>
-	<A HREF="iaminterestedtorun.php">I am interested to run</A><BR>
-	<A HREF="findmyplace.php">Select your address on a map</A>
+<div class="header">
+  <a href="#default" class="logo"><IMG SRC="/pics/OutragedDemLogo.png"></a>
+  <div class="header-right">
+    <a class="active" href="#home">Home</a>
+    <a href="#contact">Contact</a>
+    <a href="#about">About</a>
+  </div>
+</div> 
 
-<BR><BR>
+<BR>
+<UL>
+	<A HREF="interested">I am interested in running</A><BR>
+	<A HREF="signing">I would like to sign a petition of someone else running</A><BR>
+	<A HREF="includedata">I am running and would like to setup my own petition for others to sign</A><BR>
+	<A HREF="list">I would like to see the list of OutragedDems candidates</A><BR>
+	<A HREF="findmyplace.php">I would like to select my address on the map</A>
+</UL>
 
-
-<FORM ACTION="" METHOD="POST">
-	<DIV NAME="ED">Election District <INPUT TYPE="TEXT" NAME="ED"></DIV>
-	<DIV NAME="AD">Assembly District <INPUT TYPE="TEXT" NAME="AD"></DIV>
-	<DIV NAME="ADEDINPUT"><INPUT TYPE="SUBMIT" NAME="SubmitEDAD" VALUE="Get Information"></DIV>
-</FORM>
-
-
-		
+</HTML>

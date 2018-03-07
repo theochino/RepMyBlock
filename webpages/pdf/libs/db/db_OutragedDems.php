@@ -26,6 +26,12 @@ class OutragedDems extends queries {
 		return $this->_return_multiple($sql,  $sql_vars);
 	}
 	
+	function CandidatePetition($CandidateID) {
+		$sql = "SELECT * FROM CandidatePetition WHERE Candidate_ID = :Candidate ORDER BY CandidatePetition_Order";
+		$sql_vars = array('Candidate' => $CandidateID);							
+		return $this->_return_multiple($sql, $sql_vars);
+	}
+	
 }
 
 ?>

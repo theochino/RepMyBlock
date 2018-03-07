@@ -26,7 +26,21 @@ class OutragedDems extends queries {
 		return $this->_return_multiple($sql, $sql_vars);
 	}
 	
+	function SearchVoterDBbyID($DatedFiles, $RawVoterID) {
+		$TableVoter = "Raw_Voter_" . $DatedFiles;
+		$sql = "SELECT * FROM " . $TableVoter . " WHERE " . 
+		"Raw_Voter_ID = :RawVoterID";
+		$sql_vars = array('RawVoterID' => $RawVoterID);							
+		return $this->_return_multiple($sql, $sql_vars);
+	}
 	
+	
+	function FindSystemUserVoter($RawVoterID) {
+		$sql = "SELECT * FROM SystemUserVoter WHERE Raw_Voter_ID = :RawVoterID";
+		$sql_vars = array('RawVoterID' => $RawVoterID);							
+		return $this->_return_multiple($sql, $sql_vars);
+	}
+		
 	function FindGeoDiscID($GeoDescAbbrev) {
 		$sql = "SELECT * FROM GeoDesc WHERE GeoGroup_ID = '3' AND GeoDesc_Abbrev = :Abbrev";
 		$sql_vars = array('Abbrev' => $GeoDescAbbrev);							

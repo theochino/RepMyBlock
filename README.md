@@ -11,4 +11,11 @@ I am one of them and I don't like it, so this code is about breaking Aaron Burt 
 https://youtu.be/cyO9kReAcio
 
 Theo Chino<BR>
-https://youtu.be/WXRd6lF3Ix4
+https://youtu.be/WXRd6lF3Ix4<BR>
+
+# Technology
+
+This is built using OpenData, and as much as possible Open Source and Free (as Freedom) Software.
+
+https://github.com/osmlab/nycbuildings
+

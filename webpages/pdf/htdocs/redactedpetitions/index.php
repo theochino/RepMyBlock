@@ -5,35 +5,18 @@
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/db/db_OutragedDems.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . '/../libs/funcs/petition_class.php';
 	
-	$Candidate_ID = $_GET["Candidate_ID"];
-	
+	$ED = $_GET["ED"];
+	$AD = $_GET["AD"];
+	$RawVoterID = $_GET["RAW"];
+	$DatedFiles = $_GET["DatedFiles"];
 	
 	$r = new OutragedDems();
+	$result = $r->FindRawVoterbyADED($DatedFiles, $ED, $AD);
+	
+	
 
-//	$result = $r->FindRawVoterbyADED($DatedFiles, $ED, $AD);
-	
-	$result = $r->CandidatePetition($Candidate_ID);
-	
 	$PageSize = "letter";
 	$pdf = new PDF('P','mm', $PageSize);
-
-/*
-	[CandidatePetition_ID] => 16913
-	[Candidate_ID] => 34
-	[FollowUp_ID] => 
-	[CandidatePetition_Order] => 21
-	[Raw_Voter_ID] => 202731
-	[Raw_Voter_Dates_ID] => 2
-	[VotersIndexes_ID] => 
-	[CandidatePetition_VoterFullName] => Vanessa Y. Turman 
-	[CandidatePetition_VoterResidenceLine1] => 640 RIVERSIDE DRIVE - Apt. 10I
-	[CandidatePetition_VoterResidenceLine2] => MANHATTAN, NY 10031
-	[CandidatePetition_VoterResidenceLine3] => 
-	[CandidatePetition_VoterCounty] => 10031
-	[CandidatePetition_SignedDate] => 
-*/
-
-
 
 	$TotalCandidates = 0;
 	$i = 0;
@@ -59,11 +42,12 @@
 					$TotalCandidates++;	
 				}
 				
-				$Name[$i] = $var["CandidatePetition_VoterFullName"];		
-				$Address[$i] = $var["CandidatePetition_VoterResidenceLine1"] . "\n" .
-											$var["CandidatePetition_VoterResidenceLine2"] . "\n" .
-											"County of " . $var["CandidatePetition_VoterCounty"];
-				$County[$i] = $var["CandidatePetition_VoterCounty"];
+				$Name[$i] = $var["Raw_Voter_FirstName"] . " " . $var["Raw_Voter_MiddleName"] . " " . 
+										Redact($var["Raw_Voter_LastName"]) . " " . $var["Raw_Voter_Suffix"];	 		
+				$Address[$i] = Redact($var["Raw_Voter_ResHouseNumber"]) . " " . $var["Raw_Voter_ResStreetName"] . "\n" .
+											$var["Raw_Voter_ResCity"] . ", NY " . $var["Raw_Voter_ResZip"] . "\n" .
+											"County of New York";
+				$County[$i] = "New York";
 				$i++;
 			}
 		}
