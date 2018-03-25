@@ -8,9 +8,9 @@
 <link rel="stylesheet" type="text/css" href="../maps/maps.css">
 
 <div class="header">
-  <a href="/words" class="logo"><IMG SRC="/pics/OutragedDemLogo.png"></a>
+  <a href="/" class="logo"><IMG SRC="/pics/OutragedDemLogo.png"></a>
   <div class="header-right">
-    <a class="active" href="/words">Home</a>
+    <a class="active" href="/">Home</a>
     <a href="/contact">Contact</a>
     <a href="/about">About</a>
   </div>

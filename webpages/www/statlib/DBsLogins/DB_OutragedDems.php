@@ -1,5 +1,5 @@
 <?php
-$databasename = "prod_NYSVoters";
+$databasename = "NYSVoters";
 $databaseserver = "192.168.199.201";
 $databaseuser = "root";
 $databasepassword = "root";
