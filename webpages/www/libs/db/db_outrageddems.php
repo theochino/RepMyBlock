@@ -13,9 +13,15 @@ class OutragedDems extends queries {
   }
   
 	function InsertEmail($email) {
-		$sql = "INSERT INTO Email SET Email_Txt = :Email";	
+		$sql = "INSERT INTO SystemUser SET SystemUser_email = :Email";	
 		$sql_vars = array(':Email' => $email);											
 		return $this->_return_nothing($sql,  $sql_vars);
+	}
+	
+	function CheckRegisterEmail ($email) {
+		$sql = "SELECT * FROM SystemUser WHERE SystemUser_email = :Email";
+		$sql_vars = array(':Email' => $email);											
+		return $this->_return_simple($sql,  $sql_vars);
 	}
 
 	function SearchVoterDB($DatedFiles, $FirstName, $LastName, $DOB) {
@@ -45,6 +51,18 @@ class OutragedDems extends queries {
 		$sql = "SELECT * FROM GeoDesc WHERE GeoGroup_ID = '3' AND GeoDesc_Abbrev = :Abbrev";
 		$sql_vars = array('Abbrev' => $GeoDescAbbrev);							
 		return $this->_return_simple($sql, $sql_vars);
+	}
+	
+	function SearchCandidateInArea($DatedFiles, $RawVoterID) {
+		$TableVoter = "Raw_Voter_" . $DatedFiles;
+		$sql = "SELECT * FROM " . $TableVoter . " " .
+						"LEFT JOIN Raw_Voter ON (Raw_Voter.Raw_Voter_TableDate_ID = " . $TableVoter . ".Raw_Voter_ID) " .
+						"LEFT JOIN CandidatePetition ON (CandidatePetition.Raw_Voter_ID = Raw_Voter.Raw_Voter_ID) " . 
+						"LEFT JOIN Candidate ON (Candidate.Candidate_ID = CandidatePetition.Candidate_ID) " .		
+						"WHERE " . 
+						"Raw_Voter.Raw_Voter_ID = :RawVoterID";
+		$sql_vars = array('RawVoterID' => $RawVoterID);									
+		return $this->_return_multiple($sql, $sql_vars);
 	}
 
 }

@@ -20,7 +20,7 @@ class voterlist extends queries {
 	
 	function AddVoterRawVoterID($SystemUser_ID, $RawVoterID) {
 		$sql = "INSERT INTO SystemUserVoter SET SystemUser_ID = :SystemUserVoter, Raw_Voter_ID = :Raw_Voter_ID";
-		$sql_vars = array(':SystemUserVoter' => $SystemUser_ID, ":Raw_Voter_ID" => $RawVoterID);											
+		$sql_vars = array(':SystemUserVoter' => $SystemUser_ID, ":Raw_Voter_ID" => $RawVoterID);							
 		return $this->_return_nothing($sql,  $sql_vars);
 	}
 	

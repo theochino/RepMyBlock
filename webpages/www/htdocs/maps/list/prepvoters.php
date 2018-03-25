@@ -14,13 +14,17 @@
 		
 		if ( empty ($result)) {
 			// We did not find anything so we are creating it.
-			echo "I am here to create the Voter File.";
-			$result = $r->AddVoterRawVoterID($SystemUser_ID, $RawVoterID);
-			
-		} else if (! empty ($result["Raw_Voter_ID"])) {			
-			// That mean we did the stuff before so we need to jump to another screen
-			$result = $r->PrepDisctictVoterRoll($SystemUser_ID, $result["Raw_Voter_ID"], $DatedFiles);		
+			$r->AddVoterRawVoterID($SystemUser_ID, $RawVoterID);			
 		}
+		
+		if (! empty ($result["Raw_Voter_ID"])) {			
+			// That mean we did the stuff before so we need to jump to another screen
+			$RawVoterID = $result["Raw_Voter_ID"];
+		}
+		
+		$result = $r->PrepDisctictVoterRoll($SystemUser_ID, $RawVoterID, $DatedFiles);		
+		
+		print "<PRE>" . print_r($result, 1) . "<PRE>";
 		
 		
 		$EncryptURL = EncryptURL("SystemUser_ID=" . $SystemUser_ID . "&RawVoterID=" . $RawVoterID . 
