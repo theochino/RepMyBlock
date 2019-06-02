@@ -4,57 +4,40 @@
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/funcs/general.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/db/db_OutragedDems.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . '/../libs/funcs/petition_class.php';
-	
-	$Candidate_ID = $_GET["Candidate_ID"];
-	
+	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/common/verif_sec.php";
 	
 	$r = new OutragedDems();
-
-//	$result = $r->FindRawVoterbyADED($DatedFiles, $ED, $AD);
 	
-	$result = $r->CandidatePetition($Candidate_ID);
-	
+	$candidate_result = $r->CandidateInformation($Candidate_ID);
+	$result = $r->CandidatePetition($CandidatePetitionSet_ID);
 	$PageSize = "letter";
 	$pdf = new PDF('P','mm', $PageSize);
 
-/*
-	[CandidatePetition_ID] => 16913
-	[Candidate_ID] => 34
-	[FollowUp_ID] => 
-	[CandidatePetition_Order] => 21
-	[Raw_Voter_ID] => 202731
-	[Raw_Voter_Dates_ID] => 2
-	[VotersIndexes_ID] => 
-	[CandidatePetition_VoterFullName] => Vanessa Y. Turman 
-	[CandidatePetition_VoterResidenceLine1] => 640 RIVERSIDE DRIVE - Apt. 10I
-	[CandidatePetition_VoterResidenceLine2] => MANHATTAN, NY 10031
-	[CandidatePetition_VoterResidenceLine3] => 
-	[CandidatePetition_VoterCounty] => 10031
-	[CandidatePetition_SignedDate] => 
-*/
 
+	if (
+			$result[0]["CandidatePetition_VoterCounty"] == "New York" || 
+			$result[0]["CandidatePetition_VoterCounty"] == "Richmond"
+		) {
+		$pdf->Watermark = "Demo Petition / Not Valid";
+	}
 
-
+	$Counter = 1;
 	$TotalCandidates = 0;
 	$i = 0;
 	if ( ! empty ($result)) {
 		foreach ( $result as $var) {
 			if ( ! empty ($var)) {
 				// The Candidate need to be on the list automatically.
-				// We'll need to change that later.
-				if ( $var["Raw_Voter_ID"] == $RawVoterID) {
-					$pdf->Candidate[$TotalCandidates] = $var["Raw_Voter_FirstName"] . " " . $var["Raw_Voter_MiddleName"] . " " . 
-																							Redact($var["Raw_Voter_LastName"]) . " " . $var["Raw_Voter_Suffix"];	
-					$pdf->RunningFor[$TotalCandidates] = "Member of the Democratic County Committee from the " . $ED . "th " .
-																								"Election District in the " . $AD . "st Assembly District " . 
-																								"Queens County, New York State";
-					$pdf->Residence[$TotalCandidates] = Redact($var["Raw_Voter_ResHouseNumber"]) . " " . $var["Raw_Voter_ResStreetName"] . "\n" .
-											$var["Raw_Voter_ResCity"] . ", NY " . $var["Raw_Voter_ResZip"];			
+				// We'llneed to change that later.
+				if ($Counter++ == 1) {
+//				if ( $var["Raw_Voter_ID"] == $RawVoterID) {
+					$pdf->Candidate[$TotalCandidates] =  $candidate_result["Candidate_DispName"];	
+					$pdf->RunningFor[$TotalCandidates] = $candidate_result["Candidate_DispPosition"];
+					$pdf->Residence[$TotalCandidates] = $candidate_result["Candidate_DispResidence"];		
 																			
 					// In this case the witness is the candidate.
 					$pdf->WitnessName = $pdf->Candidate[$TotalCandidates];
-					$pdf->WitnessResidence = Redact($var["Raw_Voter_ResHouseNumber"]) . " " . $var["Raw_Voter_ResStreetName"] . ", " .
-											$var["Raw_Voter_ResCity"] . ", NY " . $var["Raw_Voter_ResZip"];			
+					$pdf->WitnessResidence = $candidate_result["Candidate_DispResidence"];
 
 					$TotalCandidates++;	
 				}
@@ -62,7 +45,8 @@
 				$Name[$i] = $var["CandidatePetition_VoterFullName"];		
 				$Address[$i] = $var["CandidatePetition_VoterResidenceLine1"] . "\n" .
 											$var["CandidatePetition_VoterResidenceLine2"] . "\n" .
-											"County of " . $var["CandidatePetition_VoterCounty"];
+											$var["CandidatePetition_VoterResidenceLine3"];
+											
 				$County[$i] = $var["CandidatePetition_VoterCounty"];
 				$i++;
 			}
@@ -79,9 +63,10 @@
 	fwrite(STDERR, "Result: " . count($result) . "\n");
 
 	$pdf->NumberOfCandidates = $TotalCandidates;
-	$pdf->county = "New York";
+	$pdf->county = $var["CandidatePetition_VoterCounty"];
 	$pdf->party = "Democratic";
-	$pdf->ElectionDate = "September 12th, 2018";
+	$pdf->ElectionDate = "June 25th, 2019";
+	
 	if ($pdf->NumberOfCandidates > 1) { 
 		$pdf->PluralCandidates = "s"; 
 		$pdf->PluralAcandidates = "";	
@@ -89,6 +74,7 @@
 		$pdf->PluralCandidates = "";
 		$pdf->PluralAcandidates = "a";	
 	}
+	
 	$pdf->RunningForHeading = "PARTY POSITION" . strtoupper($pdf->PluralCandidates);
 	$pdf->CandidateNomination = "nomination of such party for public office ". $pdf->PluralCandidates;
 	// Add or the if both.	
@@ -98,8 +84,8 @@
 												"Julio C. Pineda, 29 Cornelia Street Apt 1, Brooklyn, NY 11221, " .
 												"Blanca N. Pujols, 640 Riverside Drive Apt 10H, New York, NY 10031";
 	
-	$pdf->TodayDateText = "Date: December _________ , 2017";
-	$pdf->County = "Queens";
+	$pdf->TodayDateText = "Date: March _________ , 2019";
+	$pdf->County = $result[0]["CandidatePetition_VoterCounty"];
 	$pdf->City = "City of New York";
   
 	if ( $PageSize == "letter") {
@@ -120,13 +106,19 @@
 	// This is the meat of the petition.	
   $Counter = 0;
 
-  for ($i = 0; $i < count($Name); $i++) {
+	// Need to calculate the number of empty line.
+	
+	$TotalCountName = count($Name);
+	
+	
+
+  for ($i = 0; $i < $TotalCountName; $i++) {
   	$Counter++;
  		$YLocation = $pdf->GetY();
 
   	$pdf->SetFont('Arial', '', 10);
   	$pdf->SetY($YLocation + 2);
-		$pdf->Cell(38, 0, $Counter . ". Dec _____, 2017", 0, 0, 'L', 0);
+		$pdf->Cell(38, 0, $Counter . ". _______, 2019", 0, 0, 'L', 0);
 		
 		$pdf->SetX(195);
 		$pdf->Cell(38, 0, $County[$i], 0, 0, 'L', 0);
@@ -147,6 +139,29 @@
 			$pdf->AddPage();
 		}	
 	}
+	
+	while ( $Counter <= $NumberOfLines) {
+		$Counter++;
+ 		$YLocation = $pdf->GetY();
+
+  	$pdf->SetFont('Arial', '', 10);
+  	$pdf->SetY($YLocation + 2);
+		$pdf->Cell(38, 0, $Counter . ". _______, 2019", 0, 0, 'L', 0);
+		
+		$pdf->SetX(195);
+		$pdf->Cell(38, 0, $County[$i], 0, 0, 'L', 0);
+		
+		$pdf->SetXY(41, $YLocation + 6);
+		
+		
+		$pdf->SetXY(121, $YLocation - 4);
+		
+		$pdf->Line(5, $YLocation + 8, 212.5, $YLocation + 8);
+		$pdf->SetY($YLocation);
+		
+		$pdf->Ln(13); 
+	}
+	
     
 	$pdf->Output("I", "OutragedDems-Petitions.pdf");
 

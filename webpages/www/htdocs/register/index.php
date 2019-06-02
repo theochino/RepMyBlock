@@ -16,8 +16,12 @@
 			$result = $r->InsertEmail($_POST["Email"]);
 		}			
 		
+		
+		
 		$URL = "saved_email.php?k=" . EncryptURL("email=" . $_POST["ED"] . "&AD=" . $_POST["AD"] . "&Email=" . $_POST["Email"] .
 								 "&FirstName=" . $_POST["FN"] . "&LastName=" . $_POST["LN"] . "&DOB=" . $_POST["DOB"]);						 
+								 
+		$URL = "/word/?page_id=35";
 		header("Location: $URL");	
 		exit();
 	}

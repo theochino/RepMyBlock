@@ -19,7 +19,8 @@ class db {
 			exit();
     } else {
 	    // $this->connect_id = mysql_connect($host, $user, $password); - Deprecated
-	    try {     	
+	    try {     
+	    	    		
 		   	if (! empty ($sslkeys["srvkey"])) {
 		   		$MYSQLOPTIONS = array(
 		   			PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
@@ -27,8 +28,19 @@ class db {
 		  			PDO::MYSQL_ATTR_SSL_CERT	=> $sslkeys["srvcert"],
 		  			PDO::MYSQL_ATTR_SSL_CA    => $sslkeys["srvca"]
 			  	);
-			  }       		
-		   	$this->pdo = new PDO($this->type . ":host=$host;port=$port;dbname=$database", $user, $password, $MYSQLOPTIONS);
+			  	
+		  	  $time_start = microtime(true);
+			   	$this->pdo = new PDO($this->type . ":host=$host;port=$port;dbname=$database", $user, $password, $MYSQLOPTIONS);
+					$time_end = microtime(true);	  	
+					
+			  } else {
+			  	$time_start = microtime(true);
+			   	$this->pdo = new PDO($this->type . ":host=$host;port=$port;dbname=$database", $user, $password);
+					$time_end = microtime(true);	  	
+			  }
+			  
+			
+				error_log("PDO Timing: " . ($time_end - $time_start));	
 				  
 				$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				return $this->pdo;
@@ -44,7 +56,7 @@ class db {
 			}
 		}
   }
-  
+    
   function query($sql = "", $sql_vars = "", $return = 0, $DebugInfo = "") { 		
  		unset ($event_rows);
  		if ( $DebugInfo["Flag"] > 0 ) {

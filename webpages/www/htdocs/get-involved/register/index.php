@@ -2,90 +2,72 @@
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/common/verif_sec.php";
 
 	if ( ! empty ($_POST["SaveInfo"])) {
-	
 		require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/funcs/general.php";
 		require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/db/db_login.php";	
-		
 		$r = new login();
 
 		// First thing we need to check is the vadility of the email address.	
 		// Then we need to check the database for the existance of that email.	
-		$result = $r->CheckEmail($_POST["emailaddress"]);
+		// This RawVoterID is the wrong one. We need to find the one from table Raw_Voter and not TabledRaw_Voter.
+		// $resultRawVoter = $r->FindLocalRawVoterFromDatedFile($RawVoterID, $DatedFiles);		
 		
-		if ( empty ($result)) {
-			// We did not find anything so we are creating it.
-			$result = $r->AddEmail($_POST["emailaddress"], $_POST["login"], $FirstName, $LastName);
-		} else if (! empty ($result["SystemUser_password"])) {			
-				// That mean we did the stuff before so we need to jump to another screen
-			
-		}
+		$EDAD = str_pad($AssemblyDistrict, 2, '0', STR_PAD_LEFT) .
+						str_pad($ElectionDistrict, 3, '0', STR_PAD_LEFT);
+
+		$result = $r->AddEmailWithNYSID($_POST["emailaddress"], $_POST["login"], $FirstName, $LastName, $UniqNYSID, "Running", $EDAD);
+		
 		
 		$URLToEncrypt = "SystemUser_ID=" . $result["SystemUser_ID"] . "&RawVoterID=" . $RawVoterID . 
 										"&DatedFiles=" . $DatedFiles . 
 										"&ElectionDistrict=" . $ElectionDistrict . "&AssemblyDistrict=" . $AssemblyDistrict . 
-										"&FirstName=" . $FirstName . "&LastName=" . $LastName;
-
-		// The reason for no else is that the code supposed to go away.
-		
+										"&FirstName=" . $FirstName . "&LastName=" . $LastName . "&emailaddress=" . $_POST["emailaddress"];
+										
+	
+		// The reason for no else is that the code supposed to go away.		
 		if ( $_POST["login"] == "password") {
-			header("Location: requestpassword.php?k=" . EncryptURL($URLToEncrypt));
+			header("Location:/get-involved/register/requestpassword/index.php?k=" . EncryptURL($URLToEncrypt));
 			exit();
 		}
 		
 		if ( $_POST["login"] == "email") {
-			header("Location: requestemaillink.php?k=" . EncryptURL($URLToEncrypt));
+			header("Location: /get-involved/register/requestemaillink/index.php?k=" . EncryptURL($URLToEncrypt));
 			exit();
 		}
 	
 		// If we are here which we should never be we need to send user to problem loop
-		
 		exit();
-		
 	}
 
-
+	include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/headers.php"; 
 ?>
-<HTML>
-	<BODY>
-		
-		<link rel="stylesheet" type="text/css" href="../maps.css">
+<div class="row">
 
-		<div class="header">
-		  <a href="#default" class="logo"><IMG SRC="/pics/OutragedDemLogo.png"></a>
-		  <div class="header-right">
-		    <a class="active" href="#home">Home</a>
-		    <a href="#contact">Contact</a>
-		    <a href="#about">About</a>
-		  </div>
-		</div> 
+	<div class="main">
 
 		<h1>Election District <?= $ElectionDistrict ?>, Assembly District <?= $AssemblyDistrict ?></H1>
-			
-		<UL>
+
 		<H3><?= $FirstName ?></H3>
 
-		Let's start with some contact info.
-		
 		<P>
-
-		
+		<?php /*
 			<A HREF="facebook.php?k=<?= $k ?>">Click here if you prefer to use your facebook information</A><BR>
 			<A HREF="googleid.php?k=<?= $k ?>">Click here if you prefer to use your googleID information</A><BR>
+		*/ ?>
 
 			<FORM METHOD="POST" ACTION="">
 			Enter your email address: <INPUT TYPE="text" NAME="emailaddress" SIZE=30><BR>
 			
+			<?php /*
 			<INPUT TYPE="radio" NAME="login" VALUE="email">Do you prefer to login with a link sent to your email ?<BR>
-			<INPUT TYPE="radio" NAME="login" VALUE="password" CHECKED>Do you prefer to login with a traditional password ?<BR>
 			<BR>
+			*/ ?>
+			<INPUT TYPE="hidden" NAME="login" VALUE="password" CHECKED>
 			
-			<INPUT TYPE="Submit" NAME="SaveInfo" VALUE="Save my information">
+			<INPUT TYPE="Submit" NAME="SaveInfo" VALUE="Next Screen">
 			
 			</FORM>
 		</P>
+	</div>
+</div>
 		
-				
-		</UL>
-		
-	</BODY>
-</HTML>
+<?php include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/footer.php"; ?>

@@ -18,7 +18,7 @@ class maps extends queries {
 		return $this->_return_nothing($sql,  $sql_vars);
 	}
 	
-	function CountRawVoterbyADED($DatedFiles, $EDist, $ADist) {
+	function CountRawVoterbyADED($DatedFiles, $ADist, $EDist) {
 		$TableVoter = "Raw_Voter_" . $DatedFiles;
 		$sql = "SELECT COUNT(*) as TotalVoters FROM " . $TableVoter . " WHERE " . 
 		"Raw_Voter_AssemblyDistr = :AssDist AND Raw_Voter_ElectDistr = :ElectDist " . 

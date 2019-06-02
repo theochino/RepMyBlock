@@ -3,13 +3,22 @@ require($_SERVER["DOCUMENT_ROOT"] . '/../libs/utils/fpdf181/fpdf.php');
 
 class PDF extends FPDF {
 	
+	var $angle=0;
 	//$Botton_Corner_Y = 0;
 	 
 	// Page header
 	function Header()	{
+
+		if (! empty ($this->Watermark)) {
+			$this->SetFont('Arial','B',50);
+    	$this->SetTextColor(255,192,203);
+   		$this->RotatedText(35,190, $this->Watermark, 45);
+   		$this->RotatedText(40,210, "Election will be held in 2019", 45);
+   		$this->SetTextColor(0,0,0);
+		}
 		
     $this->SetFont('Arial','B',12);
-     $this->Cell(0,0, strtoupper($this->party) . " PARTY",0,0,'C');
+    $this->Cell(0,0, strtoupper($this->party) . " PARTY",0,0,'C');
     $this->Ln(4);
 		$this->Cell(0,0, "Designating Petition - " . $this->county . ' County',0,0,'C');
     $this->Ln(3);    
@@ -110,7 +119,7 @@ class PDF extends FPDF {
 		$this->Ln(1);
 		$this->MultiCell(0, 2.8, 
 			"I, " . $this->WitnessName . " state: I am a duly qualified voter of the State of New York and am an " . 
-			"enrolled voter of the Democratic Party. I now reside at " . $this->WitnessResidence . "Each " . 
+			"enrolled voter of the Democratic Party. I now reside at " . $this->WitnessResidence . ". Each " . 
 			"of the individuals whose names are subscribed to this petition sheet " . 
 			"containing ____ signatures, subscribed the same in my presence on the dates above indicated " . 
 			"and identified himself or herself to be the individual who signed this sheet. I understand that this " .
@@ -138,5 +147,36 @@ class PDF extends FPDF {
 		$this->Cell(0, 0,	"SHEET No. ______ ");
 
 	}
+	
+	function Rotate($angle,$x=-1,$y=-1) {
+    if($x==-1) $x=$this->x;
+    if($y==-1) $y=$this->y;
+    if($this->angle!=0) $this->_out('Q');
+    $this->angle=$angle;
+    if($angle!=0) {
+      $angle*=M_PI/180;
+      $c=cos($angle);
+      $s=sin($angle);
+      $cx=$x*$this->k;
+      $cy=($this->h-$y)*$this->k;
+      $this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',$c,$s,-$s,$c,$cx,$cy,-$cx,-$cy));
+    }
+  }
+    
+  function RotatedText($x, $y, $txt, $angle) {
+	  //Text rotated around its origin
+	  $this->Rotate($angle,$x,$y);
+	  $this->Text($x,$y,$txt);
+	  $this->Rotate(0);
+	}
+	
+	function _endpage() {
+    if($this->angle!=0) {
+      $this->angle=0;
+      $this->_out('Q');
+    }
+    parent::_endpage();
+	}
+	
 }
 ?>

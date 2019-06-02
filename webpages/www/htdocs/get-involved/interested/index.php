@@ -1,68 +1,98 @@
 <?php 
+	$BigMenu = "represent";
+	if ( ! empty ($k)) { $MenuLogin = "logged"; }
+	
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/common/verif_sec.php";
+	require_once $_SERVER["DOCUMENT_ROOT"] . "/../statlib/Config/Vars.php";
 
-	if ( ! empty ($_POST)) {
-		$URL = "checkinfo.php?k=" . EncryptURL("ED=" . $_POST["ED"] . "&AD=" . $_POST["AD"] . "&Email=" . $_POST["Email"] .
-								 "&FirstName=" . $_POST["FN"] . "&LastName=" . $_POST["LN"] . "&DOB=" . $_POST["DOB"]);						 
-		header("Location: $URL");	
-		exit();
+	$DOBYEAR = "19";
+	$DOBDAY = "";
+	$DOBMONTH = 1;
+
+	if ( ! empty ($_POST)) {  
+		if ( empty ($_POST["LN"]) || empty ($_POST["FN"])) {
+			$error_msg = "<B><FONT COLOR=RED>Please enter your name.</FONT></B>";
+		} else if ( empty ($_POST["year-of-birth"]) || empty ( $_POST["month-of-birth"]) || empty ($_POST["day-of-birth"])) {
+	  	$error_msg = "<B><FONT COLOR=RED>Please enter your date of birth.</FONT></B>";
+	  } else {
+		  $DOB = $_POST["year-of-birth"] . "-" . $_POST["month-of-birth"] . "-" . $_POST["day-of-birth"];
+		  if ( checkdate ( $_POST["month-of-birth"] ,  $_POST["day-of-birth"] , $_POST["year-of-birth"]) == 1) {
+				$URL = "checkinfo.php?k=" . EncryptURL("FirstName=" . $_POST["FN"] . "&LastName=" . $_POST["LN"] . "&DOB=" . $DOB . "&Email=" . $_POST["EM"]);						 
+				header("Location: $URL");	
+				exit();
+			}
+			$error_msg = "<B><FONT COLOR=RED>Please check the date of birth as it seems incorrect.</FONT></B>";
+		}
+	}
+	include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/headers.php";
+	
+	if ( ! empty ($DOB)) {
+		$ParsedDOB = strtotime( $DOB );
+		$DOBYEAR = date('Y', $ParsedDOB);
+		$DOBDAY = date('d', $ParsedDOB);
+		$DOBMONTH = date('n', $ParsedDOB);
 	}
 	
 ?>
-
-
-<link rel="stylesheet" type="text/css" href="../maps.css">
-
-<div class="header">
-  <a href="#default" class="logo"><IMG SRC="/pics/OutragedDemLogo.png"></a>
-  <div class="header-right">
-    <a class="active" href="#home">Home</a>
-    <a href="#contact">Contact</a>
-    <a href="#about">About</a>
-  </div>
-</div> 
-
-
-<UL>
-
-
-I am interested to run myself for office.
-If I am logged in, then pass forward or then pass to login piece
-
-<BR><BR>
+<div class="main">
 
 <P>
-	We have our own copy of the whole New York State database 
+	<H1>Run for County Committee!</H1>
+</P>
+		
+<P>
+	The first step in being your block representative in the Democratic party is to verify that 
+	you are registered to vote as a Democrat.
 </P>
 
-<STRONG>We need to look you up in the voter database.<BR>
-	Are you a New York State Registered voter in the Democratic Party ?</STRONG>
 <P>
-What is your first name, last name, and date of birth ?
+	<B><A HREF="<?= $FrontEndWebsite ?>/county-committee">This link explains in more 
+	details the role of the County Committee</A>.</B>
+</P>
 
-</UL>
+<?php if (! empty ($error_msg)) { ?>
+<P>
+	<?= $error_msg ?>
+</P>
+<?php } ?>
 
 <div class="container">
-
 	<FORM ACTION="" METHOD="POST">
-	
-		<INPUT TYPE="hidden" NAME="ED" VALUE="<?= $_GET["ED"] ?>">
-		<INPUT TYPE="hidden" NAME="AD" VALUE="<?= $_GET["AD"] ?>">
-		<INPUT TYPE="hidden" NAME="EMAIL" VALUE="<?= $_GET["EMAIL"] ?>">
-		
+
 		<label for="fname">First Name</label>
-		<input type="text" id="fname" name="FN" placeholder="Your name..">
+		<input type="text" id="fname" name="FN" value="<?= $FN ?>" placeholder="Your name ...">
 		
 		<label for="lname">Last Name</label>
-		<input type="text" id="lname" name="LN" placeholder="Your last name..">
-		
+		<input type="text" id="lname" name="LN" value="<?= $LN ?>" placeholder="Your last name ...">
+		<BR>
 		<label for="meeting">Date of Birth:</label>
-		<input id="meeting" type="date" name="DOB"> 
+		<input id="meeting" type="text" name="day-of-birth" size=2 value="<?= $DOBDAY ?>">
+		<SELECT id="meeting" name="month-of-birth"> 
+		    <OPTION VALUE="01"<?php if ($DOBMONTH == 1) { echo " SELECTED"; } ?>>January</OPTION>
+		    <OPTION VALUE="02"<?php if ($DOBMONTH == 2) { echo " SELECTED"; } ?>>February</OPTION>
+		    <OPTION VALUE="03"<?php if ($DOBMONTH == 3) { echo " SELECTED"; } ?>>March</OPTION>
+		    <OPTION VALUE="04"<?php if ($DOBMONTH == 4) { echo " SELECTED"; } ?>>April</OPTION>
+		    <OPTION VALUE="05"<?php if ($DOBMONTH == 5) { echo " SELECTED"; } ?>>May</OPTION>
+		    <OPTION VALUE="06"<?php if ($DOBMONTH == 6) { echo " SELECTED"; } ?>>June</OPTION>
+		    <OPTION VALUE="07"<?php if ($DOBMONTH == 7) { echo " SELECTED"; } ?>>July</OPTION>
+		    <OPTION VALUE="08"<?php if ($DOBMONTH == 8) { echo " SELECTED"; } ?>>August</OPTION>
+		    <OPTION VALUE="09"<?php if ($DOBMONTH == 9) { echo " SELECTED"; } ?>>September</OPTION>
+		    <OPTION VALUE="10"<?php if ($DOBMONTH == 10) { echo " SELECTED"; } ?>>October</OPTION>
+		    <OPTION VALUE="11"<?php if ($DOBMONTH == 11) { echo " SELECTED"; } ?>>November</OPTION>
+		    <OPTION VALUE="12"<?php if ($DOBMONTH == 12) { echo " SELECTED"; } ?>>December</OPTION>
+		</SELECT>
+		<input id="meeting" type="text" name="year-of-birth" size=4 VALUE="<?= $DOBYEAR ?>"> 
+		<BR>
+		<label for="meeting">Email:</label>
+		<input type="text" id="email" name="EM" size=55 placeholder="Your email address ..." value="<?= $Email ?>">
 		
 		<label for="submit">
-			<input type="submit" value="Submit">
+			<input type="submit" value="Verify your eligibility">
 		</label>
 	
 	</FORM>
-
 </div> 
+
+</DIV>
+
+<?php include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/footer.php"; ?>

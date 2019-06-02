@@ -39,7 +39,7 @@
 		$PDFURL = $FrontEndPDF . "/petitions/?k=" . EncryptURL("ED=" . $ElectionDistrict . "&AD=" . $AssemblyDistrict . 
 							"&RAW=" . $RawVoterID . "&DatedFiles=" . $DatedFiles);
 	} else {
-		$PDFURL = "/maps/iaminterestedtorun.php?k=" . EncryptURL("ED=" . $ElectionDistrict . "&AD=" . $AssemblyDistrict);
+		$PDFURL = "/get-involved/iaminterestedtorun.php?k=" . EncryptURL("ED=" . $ElectionDistrict . "&AD=" . $AssemblyDistrict);
 	}
 	
 	$URLAction = "k=" . EncryptURL("RawVoterID=" . $RawVoterID . "&DatedFiles=" . $DatedFiles . 

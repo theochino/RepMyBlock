@@ -1,9 +1,17 @@
 <?php
 
+function ordinal($number) {
+  $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+  if ((($number % 100) >= 11) && (($number%100) <= 13))
+      return $number. 'th';
+  else
+      return $number. $ends[$number % 10];
+}
+
 function WriteStderr($Data) {
 	// Need to save the information
 	$STDERR = fopen('php://stderr', 'w+');
-	
+
 	fwrite($STDERR, "\n");
 	fwrite($STDERR, print_r($Data, 1));
 	fwrite($STDERR, "\n");
@@ -43,7 +51,16 @@ function PrintRandomText($length = 9) {
 
 function PrintShortDate($Date) {
 	if ( ! empty ($Date)) {
-		return date("d M Y", strtotime( $Date ));
+		return date("F jS, Y", strtotime( $Date ));
 	}
 }
+
+function PrintShortTime($Date) {
+	if ( ! empty ($Date)) {
+		return date("h:i a", strtotime( $Date ));
+	}
+}
+
+
+
 ?>

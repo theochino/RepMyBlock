@@ -1,22 +1,75 @@
-<HTML>
-<link rel="stylesheet" type="text/css" href="maps.css">
+<?php 
+	$BigMenu = "home";
+	if ( ! empty ($k)) { $MenuLogin = "logged"; }
+	
+	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/common/verif_sec.php";	
+	require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/funcs/general.php";
+	include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/headers.php"; 	
+	
+	
+	/* User is logged */
+	if ( $MenuLogin == "logged") {
+?>
+<div class="main">
 
-<div class="header">
-  <a href="#default" class="logo"><IMG SRC="/pics/OutragedDemLogo.png"></a>
-  <div class="header-right">
-    <a class="active" href="#home">Home</a>
-    <a href="#contact">Contact</a>
-    <a href="#about">About</a>
-  </div>
-</div> 
+	<P>
+		This is the Home Menu when logged with information about the program and some stats.
+	</P>
 
-<BR>
-<UL>
-	<A HREF="interested">I am interested in running</A><BR>
-	<A HREF="signing">I would like to sign a petition of someone else running</A><BR>
-	<A HREF="includedata">I am running and would like to setup my own petition for others to sign</A><BR>
-	<A HREF="list">I would like to see the list of OutragedDems candidates</A><BR>
-	<A HREF="findmyplace.php">I would like to select my address on the map</A>
-</UL>
+	<P>
+		
+	<a href="/get-involved/list/?k=<?= $k ?>">I am interested in running for County Committee.</a><BR>
+  <a href="/get-involved/nominate/?k=<?= $k ?>">I am not interested in running but I want to nominate a candidate in my district by singing a petition.</a>
+	</P>
+	
+	<P>
+		You nominated XXX to run for the following positions.
+		<BR>
+		XY1  == Have not accepted the nomination for <BR>
+		HJ   == Accepted the nomination for<BR>
+	</P>
+	
+	
+ </DIV>
 
-</HTML>
+<?php		
+	// User is not logged
+	} else { 
+	
+?>
+
+<div class="main">
+	<P CLASS="BckGrndCenter">I WANT TO</P>
+
+	<DIV>
+		<A class="action-runfor" HREF="interested" CLASS="RunCC"><img class="action-runfor" src="/pics/options/RunFor.png" alt="RUN FOR COUNTY COMMITTEE"></A>
+		<A class="action-nominate" HREF="propose" CLASS="NomCandidate"><img class="action-nominate" src="/pics/options/Nominate.png" alt="NOMINATE A CANDIDATE"></A>
+	</DIV>
+<?php /*
+	<P CLASS="BlueBox">
+		<A HREF="interested" class="w3-button w3-bar-item w3-blue w3-hover-text-red BlueBox">ACT NOW! PETITIONING RUNS FROM<BR>FEBRUARY 26 TO APRIL 4, 2019.</a>
+	</P>
+*/?>
+	<P CLASS="BckGrndElement">HOW IT WORKS</P>
+
+	<P>
+		The County Committee is the most basic committee of the Democratic Party; its its backbone. 
+	</P>
+	
+	<P>	
+		The County Committee is the most basic committee of the Democratic Party; its its backbone as it selects the local platform and the candidates that will represent our values. Many registered Democrats dont even know its existence. Its the body that validates the party backroom deals. 
+	</P>
+	
+	<P CLASS="MediaCenter">
+	 <iframe width="560" height="315" src="https://www.youtube.com/embed/MnI7iBxCN4A?feature=oembed" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+	</P>
+
+	<P>
+		The time commitment is 40 hours a year.
+	</P>
+
+</div>
+
+<?php } ?>
+
+<?php include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/footer.php"; ?>
