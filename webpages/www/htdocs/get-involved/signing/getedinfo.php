@@ -7,7 +7,6 @@
 	// This is required for any jump to another internal site inside domain.
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/../statlib/Config/Vars.php";
 	
-	$GoogleMapKeyID = "AIzaSyDDYjTlFL3rPZMZN6TGFqWBGrp2aRxoO5c"; 
 	$ElectionDistrict = $ED;
 	$AssemblyDistrict = $AD;
 	
