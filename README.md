@@ -8,7 +8,9 @@ Martin Scorsese made a movie that illustrated the power of the Society of St. Ta
 https://www.nytimes.com/2017/09/18/nyregion/new-york-politics-party-bosses.html
 
 I am one of them and I don't like it, so this code is about breaking Aaron Burr shenanigans.<BR>
-https://youtu.be/cyO9kReAcio
+https://repmyblock.nyc/ny_politic_education
+  
+
 
 Theo Chino<BR>
 https://youtu.be/WXRd6lF3Ix4<BR>
