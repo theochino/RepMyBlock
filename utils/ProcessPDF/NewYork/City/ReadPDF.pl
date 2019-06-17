@@ -4,12 +4,30 @@ use strict;
 use CAM::PDF;
 use DBI;
 use Text::Aspell;
+use Term::ANSIColor;
 
-my $DBPrivacy = "dbi:mysql:NYSVoters:192.168.199.217:3306", my $DBUsername = "root", my $DBPassword = "root";	
+my $VerbosePrint = 10;
+
+my $DBPrivacy = "dbi:mysql:NYSVoters:192.168.199.157:3306", my $DBUsername = "root", my $DBPassword = "root";	
 my $dbhPrim = DBI->connect($DBPrivacy, $DBUsername, $DBPassword) or die "Connection Error: $DBI::errstr\n";
+
+
+my $sth_FindLastDate = $dbhPrim->prepare("SELECT * FROM NYSVoters.Raw_Voter_Dates ORDER BY Raw_Voter_Dates_Date DESC LIMIT 1");
+my @row = $sth_FindLastDate->fetchrow_array();
+my $tabledate = $row[0];
 
 my $sth_FirstName = $dbhPrim->prepare("SELECT VotersFirstName_ID FROM VotersFirstName WHERE VotersFirstName_Compress = ?");
 my $sth_LastName = $dbhPrim->prepare("SELECT VotersLastName_ID FROM VotersLastName WHERE VotersLastName_Compress = ?");
+my $sth_NameIndex = $dbhPrim->prepare("SELECT * FROM VotersIndexes WHERE VotersFirstName_ID = ? AND VotersLastName_ID = ?");
+
+my $sql = "SELECT * FROM Raw_Voter_" . $tabledate . " WHERE Raw_Voter_UniqNYSVoterID = ?";
+my $sth_FindRawTable = $dbhPrim->prepare($sql);
+
+my $sth_AddCandidates = $dbhPrim->prepare("INSERT INTO BOECandidates SET " . 
+																					"BOECandidates_Office = ?, BOECandidates_District = ?, " .
+																					"BOECandidates_Party = ?, BOECandidates_FullName = ?, BOECandidates_Address = ?, " .
+																					"BOECandidates_ZipCode = ?,	BOECandidates_PetitionID = ?, " .
+																					"Raw_Voter_UniqNYSVoterID = ?");
 
 my $file_name = shift;
 my $pdf = CAM::PDF->new($file_name);
@@ -24,12 +42,12 @@ my $LongString = "";
 for my $page ( 1 .. $NumberOfPages ) {	
 	my $text = $pdf->getPageText($page);
 	my @lines = split (/\n/, $text);
-
 	foreach my $string (@lines) {		
 		$LongString .= $string . " ";
 	}
 }
 
+#exit();
 my @Words = split (/ /, $LongString);
 $LongString = "";
 
@@ -63,7 +81,7 @@ print "\nforeach output:\n";
 foreach my $key (keys %HashWordCount) {
   # do whatever you want with $key and $value here ...
   my $value = $HashWordCount{$key};
-#  print "  $key ->:  $value ";
+  # print "  $key ->:  $value ";
    
  	### Check the word against the First Name and Last Name database.
  	### Ignore if it start with a number.
@@ -83,7 +101,7 @@ foreach my $key (keys %HashWordCount) {
 			}
 	 	}
  	}
-# 	print $HashWordType { $key } . "\n";
+	# print $HashWordType { $key } . "\n";
 }
 
 ## Find the word to put them back;
@@ -96,18 +114,47 @@ my $MyLastTime = 0;
 for (my $j = 0; $j < $TotalWords; $j++) {
 	if ( $HashWordType { $Words[$j] } =~ /^([FN]|[LN])/ ) {
 		$WordType[$j] = $HashWordType { $Words[$j] };		 
+		
+		### HERE IS WHERE WE SAVE THE INFORMATION TO CHECK FULL NAME
+				
 	}
 	
 	if ( $Words[$j] eq "Republican" || $Words[$j] eq "Democratic" ) {
 		$WordType[$j] = "office-party";
 		$MyOfficeParty = 1;
 	}
-	
+
+	### These are the offices	
 	if ( $Words[$j] eq "County" && $Words[($j+1)] eq "Committee" && $Words[($j+2)] eq "-") {
-		for (my $k= 0; $k< 3;$k++) { $WordType[($j+$k)] = "office";	}
+		for (my $k = 0; $k < 2;$k++) { $WordType[($j+$k)] = "office";	}
+		$WordType[($j+2)] = "ignore";
 		$WordType[($j+3)] = "office-district";
-	}
 		
+	} elsif ( $Words[$j] eq "Public" && $Words[($j+1)] eq "Advocate" && $Words[($j+2)] eq "-") {
+		for (my $k = 0; $k < 3;$k++) { $WordType[($j+$k)] = "office";	}
+		$WordType[($j+3)] = "office-district";
+		
+	} elsif ( $Words[$j] eq "Judge" && $Words[($j+1)] eq "of" && $Words[($j+2)] eq "the" && $Words[($j+3)] eq "Civil" && $Words[($j+4)] eq "Court" && $Words[($j+5)] eq "-") {
+		for (my $k = 0; $k < 6;$k++) { $WordType[($j+$k)] = "office";	}
+		for (my $k = 6; $k < 13;$k++) { $WordType[($j+$k)] = "office-district";	}
+			
+	} elsif ( $Words[$j] eq "Female" && $Words[($j+1)] eq "District" && $Words[($j+2)] eq "Leader" && $Words[($j+3)] eq "-") {
+		for (my $k = 0; $k < 4;$k++) { $WordType[($j+$k)] = "office";	}
+		for (my $k = 5; $k < 10;$k++) { $WordType[($j+$k)] = "office-district"; }	
+			
+	} elsif ( $Words[$j] eq "Male" && $Words[($j+1)] eq "District" && $Words[($j+2)] eq "Leader" && $Words[($j+3)] eq "-") {
+		for (my $k = 0; $k < 4;$k++) { $WordType[($j+$k)] = "office";	}
+		for (my $k = 5; $k < 10;$k++) { $WordType[($j+$k)] = "office-district";	}
+
+	} elsif ( $Words[$j] eq "Delegate" && $Words[($j+1)] eq "to" && $Words[($j+2)] eq "Judicial" && $Words[($j+3)] eq "Convention" && $Words[($j+4)] eq "-") {
+		for (my $k = 0; $k < 5;$k++) { $WordType[($j+$k)] = "office";	}
+		for (my $k = 5; $k < 9;$k++) { $WordType[($j+$k)] = "office-district";	}
+			
+	} elsif ( $Words[$j] eq "Alternate" && $Words[($j+1)] eq "Delegate" && $Words[($j+2)] eq "to" && $Words[($j+3)] eq "the" && $Words[($j+4)] eq "Judicial" && $Words[($j+5)] eq "Convention" && $Words[($j+6)] eq "-") {
+		for (my $k = 0; $k < 7;$k++) { $WordType[($j+$k)] = "office";	}
+		for (my $k = 8; $k < 10;$k++) { $WordType[($j+$k)] = "office-district";	}
+	}	
+
 	if ( $MyOfficeParty == 1) {
 		if ( $Words[$j] =~ /^\d/ ) {
 			$MyAddressStart = 1;
@@ -119,21 +166,17 @@ for (my $j = 0; $j < $TotalWords; $j++) {
 		$MyZipcodeStuff = 1;		
 		$MyTimeOffset = 1;
 	}
-	
-	if ( $Words[$j] =~ m/^[01]?\d\/[0123]?\d\/\d{2}/ ) {
-		$WordType[$j] = "date";
-		$MyTimeOffset = 0;
-	}
-	
+
 	if ( $Words[$j] eq "am" || $Words[$j] eq "pm") {
 		if ( $Words[($j-1)] =~ m/^(1[0-2]|0?[1-9]):([0-5]?[0-9])$/) {
 			$WordType[($j-1)] = "time";
 			$WordType[$j] = "time";
-			
-			
+
 			if ( $MyOfficeParty == 0 && $MyAddressStart == 0 && $MyZipcodeStuff == 0 && $MyTimeOffset == 0 ) {
-				for (my $k = $MyLastTime; $k < $MyLastTime; $k++) {
-					$WordType[$k] = "description";
+				for (my $k = $MyLastTime; $k < $j; $k++) {
+					if ( $WordType[$k] ne "time" && $WordType[$k] ne "date" && $WordType[$k] ne "petition") {
+						$WordType[$k] = "description";					
+					}
 				}
 			}
 
@@ -149,10 +192,14 @@ for (my $j = 0; $j < $TotalWords; $j++) {
 		$WordType[$j] = "address";
 	}
 	
-	if ( $MyOfficeParty == 1 && $MyAddressStart == 1 && $MyZipcodeStuff == 0 && $MyTimeOffset == 1 && $WordType[$j] ne "petition") {
+	if ( $MyZipcodeStuff == 1 && $WordType[$j] ne "petition" && $WordType[$j] ne "zipcode") {
 		$WordType[$j] = "description";
 	}
 	
+	if ( $Words[$j] =~ m/^[01]?\d\/[0123]?\d\/\d{2}/ ) {
+		$WordType[$j] = "date";
+		$MyTimeOffset = 0;
+	}
 	
 }
 
@@ -174,12 +221,175 @@ for (my $j = 0; $j < $TotalWords; $j++) {
 	}
 
 }
+	
 
-#$TotalWords = 1000;
+#for (my $j = 0; $j < $TotalWords; $j++) {	
+#	if ( $WordType[$j] ne "ignore") {
+#		print "Words: #" . $Words[$j] . "# Type: " . $WordType[$j]  . "\n";
+#	}
+#}
 
 ## Now try to indentify the addresses from the ZipCode limit.
+my $FoundTop = 0;
+my $FoundAddress = 0;
+my $FoundDesc = 0;
+
+my $OfficePositionString = "";
+my $OfficeDistrict = "";
+my $OfficeParty = "";
+my $OfficeFullName = "";
+my $OfficeAddress = "";
+my $OfficeZipcode = "";
+my $OfficePetitionID = "";
+my $OfficeDescription = "";
+
+my @FinalPostionString = "";
+my @FinalDistrict = "";
+my @FinalParty = "";
+my @FinalFullName = "";
+my @FinalAddress = "";
+my @FinalZipcode = "";
+my @FinalPetitionID = "";
+my @FinalDescription = "";
+my $FinalCandidateCounter = 0;
+my $LocalCountToNext = 0;
+
+my $PrevOffice = "";
+my $PrevOfficePosition = "";
+
+### This is the middle.
 for (my $j = 0; $j < $TotalWords; $j++) {
 	if ( $WordType[$j] ne "ignore") {
-		print "Words: #" . $Words[$j] . "# Type: " . $WordType[$j]  . "\n";
+		if ( $VerbosePrint > 5 ) {
+			print "\n### FinalCandidateCounter: " . color("bright_cyan") . $FinalCandidateCounter . color("reset") . "\n";
+			print "################# BEG Word $j of $TotalWords #### Word: " . $Words[$j] . " Type: " . $WordType[$j] . " ##########\n";		
+			print "FoundTop: " . color("bright_cyan") . $FoundTop . color("reset") . " FoundAddress: " . color("bright_cyan") . $FoundAddress . color("reset") . " FoundDesc: " . color("bright_cyan") . $FoundDesc . color("reset") . "\n";
+		}
+		
+		if ( length($FinalPostionString[$FinalCandidateCounter]) > 0 && length($FinalDistrict[$FinalCandidateCounter]) > 0 &&
+					length($FinalParty[$FinalCandidateCounter]) > 0 && length($FinalFullName[$FinalCandidateCounter]) > 0 &&
+					length($FinalAddress[$FinalCandidateCounter]) > 0 && length($FinalZipcode[$FinalCandidateCounter]) > 0 &&
+					length($FinalPetitionID[$FinalCandidateCounter]) > 0 && length($FinalDescription[$FinalCandidateCounter]) > 0 &&
+					length($WordType[$j] == "office-party")) {
+			$FinalCandidateCounter++;
+		}
+		
+		
+		if ( $FoundTop == 0) {
+			if ( length($OfficePositionString) > 0 && length($OfficeParty) > 0 ) { 
+				## Before expanding, 
+				my $BreakLoop = 0;
+				for ( my $l = $j; $l <  $TotalWords && $BreakLoop == 0; $l++) {
+					if ($WordType[$l] eq "office" || $WordType[$l] eq "office-party"  ) {						
+						$LocalCountToNext = $l;
+						$BreakLoop = 1;
+					}
+				}
+				print color("bright_red") . "LocalCountToNext: $LocalCountToNext\n" . color("reset");				
+			}
+			$OfficePositionString = ""; $OfficeDistrict = ""; $OfficeParty = ""; 
+			$OfficeFullName = "";	$OfficeAddress = ""; 	$OfficePetitionID = ""; 
+			$OfficeDescription = ""; $OfficeZipcode = "";
+			$FoundAddress = 0; $FoundDesc = 0; $FoundTop = 1;
+		}
+		
+		if ($LocalCountToNext == $j) { $FinalCandidateCounter++; }
+		
+		if ( $WordType[$j] eq "office" ) { $OfficePositionString .= $Words[$j] . " "; }
+		if ( $WordType[$j] eq "address") { $OfficeAddress .=  $Words[$j] . " "; $FoundAddress = 0; }
+		if ( $WordType[$j] eq "office-district") { $OfficeDistrict .= $Words[$j] . " "; }
+		if ( $FoundAddress == 1) { $OfficeFullName .= $Words[$j] . " "; }
+		if ( $WordType[$j] eq "office-party") { $OfficeParty .= $Words[$j] . " "; $FoundAddress = 1; }
+		if ( $WordType[$j] eq "zipcode") { $OfficeZipcode = $Words[$j]; }
+		if ( $WordType[$j] eq "petition") { $OfficeDescription .=  $Words[$j] . " ";  $OfficePetitionID = $Words[$j]; }
+
+		if ( $WordType[$j] eq "date") {	$FoundDesc = 0; }
+		if ( $WordType[$j] eq "time") {		
+
+			if ( length($OfficePositionString) > 0) { $FinalPostionString[$FinalCandidateCounter] = $OfficePositionString; }
+			if ( length($OfficeDistrict) > 0) { $FinalDistrict[$FinalCandidateCounter] = $OfficeDistrict; }
+			if ( length($OfficeParty) > 0) { $FinalParty[$FinalCandidateCounter] = $OfficeParty; }
+			if ( length($OfficeFullName) > 0) { $FinalFullName[$FinalCandidateCounter] = $OfficeFullName; }
+			if ( length($OfficeAddress) > 0) { $FinalAddress[$FinalCandidateCounter] = $OfficeAddress; }
+			if ( length($OfficeZipcode) > 0) { $FinalZipcode[$FinalCandidateCounter] = $OfficeZipcode; }
+			if ( length($OfficePetitionID) > 0) { $FinalPetitionID[$FinalCandidateCounter] = $OfficePetitionID; }
+			if ( length($OfficeDescription) > 0) { $FinalDescription[$FinalCandidateCounter] = $OfficeDescription; }
+			
+			if ( length($FinalPostionString[$FinalCandidateCounter]) == 0) { $FinalPostionString[$FinalCandidateCounter] = $PrevOfficePosition; }
+			if ( length($FinalDistrict[$FinalCandidateCounter]) == 0) { $FinalDistrict[$FinalCandidateCounter] = $PrevOffice; }
+			
+			
+			$FoundTop = 0;
+
+		}
+		
+		if ( $FoundDesc == 1) { $OfficeDescription .= $Words[$j] . " "; }		
+		if ( length($OfficePositionString) > 0) { $PrevOfficePosition = $OfficePositionString; }
+		if ( length($OfficeDistrict) > 0 ) { $PrevOffice = $OfficeDistrict; }
+
+		if ( $VerbosePrint > 5 ) {	
+			print "\nFinalCandidateCounter: " . color("bright_cyan") . $FinalCandidateCounter . color("reset") . "\n";
+			print "Office Position: " . color("bright_cyan") . $OfficePositionString . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalPostionString[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Office District: " .  color("bright_cyan") . $OfficeDistrict . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalDistrict[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Office Party: " . color("bright_cyan") . $OfficeParty . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalParty[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Candidate Name: " . color("bright_cyan") . $OfficeFullName . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalFullName[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Candidate Address: " . color("bright_cyan") . $OfficeAddress . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalAddress[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Candidate Zipcode: " . color("bright_cyan") . $OfficeZipcode . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalZipcode[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Petition ID: " . color("bright_cyan") . $OfficePetitionID . color("reset")  . "\tFinal: " . color("bright_magenta") . $FinalPetitionID[$FinalCandidateCounter] . color("reset") . "\n";
+			print "Description: " . color("bright_cyan") . $OfficeDescription . color("reset") . "\tFinal: " . color("bright_magenta") . $FinalDescription[$FinalCandidateCounter] . color("reset") . "\n";
+		
+			print "\nOffice Prev Position: " . color("magenta") . $PrevOfficePosition . color("reset") . "\n";
+			print "Office Prev Distict: " . color("magenta") . $PrevOffice . color("reset") . "\n";
+			
+			print "\n";
+			print "FoundTop: " . color("bright_cyan") . $FoundTop . color("reset") . " FoundAddress: " . color("bright_cyan") . $FoundAddress . color("reset") . " FoundDesc: " . color("bright_cyan") . $FoundDesc . color("reset") . "\n";
+			print "\n### FinalCandidateCounter: " . color("bright_cyan") . $FinalCandidateCounter . color("reset") . "\n";
+			print "################# END Word $j of $TotalWords #### Word: " . $Words[$j] . " Type: " . $WordType[$j] . " ##########\n\n";
+			if ($VerbosePrint > 8) { <STDIN>; }
+		}
 	}
+	
 }
+
+print "Final Candidate Counter: $FinalCandidateCounter\n";
+
+my $TotalFinal = 0;
+for (my $i = 0; $i < $FinalCandidateCounter; $i++) {
+	#if (  length($FinalPostionString[$i]) > 0 ) {
+		$TotalFinal++;
+		#print "\nI: $i\n";
+		#print "Office Position: " . $FinalPostionString[$i] . "\t";
+		#print "Office District: " . $FinalDistrict[$i] . "\t";
+		#print "Office Party: " . uc(substr($FinalParty[$i], 0, 3)) . "\t";
+		#print "Candidate Name: " . $FinalFullName[$i] . "\t";
+		#print "Candidate Address: " . $FinalAddress[$i] . "\t";
+		#print "Candidate Zipcode: " . $FinalZipcode[$i] . "\t";
+		#print "Petition ID: " . $FinalPetitionID[$i] . "\t";
+		#print "Description: " . $FinalDescription[$i] . "\n";
+		
+		print $i . "\t";
+		print $FinalPostionString[$i] . "\t";
+		print $FinalDistrict[$i] . "\t";
+		print uc(substr($FinalParty[$i], 0, 3)) . "\t";
+		print $FinalFullName[$i] . "\t";
+		print $FinalAddress[$i] . "\t";
+		print $FinalZipcode[$i] . "\t";
+		print $FinalPetitionID[$i] . "\t";
+		print $FinalDescription[$i] . "\n";
+		
+		### Here is the check of the Full Name and trying to find it.
+		###	$sth_NameIndex 
+		
+		### Remove this DB call. Print to file then use another script.s
+		#$sth_AddCandidates->execute($FinalPostionString[$i], 
+		#														$FinalDistrict[$i], uc(substr($FinalParty[$i], 0, 3)),
+		#														$FinalFullName[$i], $FinalAddress[$i], $FinalZipcode[$i], $FinalPetitionID[$i], "");
+	#}
+}
+print "\nFinal Candidate Counter: $TotalFinal\n";
+
+#my $str_AddCandidates = $dbhPrim->prepare("INSERT INTO BOECandidates SET " . 
+#																					"BOECandidates_Office = ?, BOECandidates_District = ?, " .
+#																					"BOECandidates_Party = ?, BOECandidates_FullName = ?, BOECandidates_Address = ?, " .
+#																					"BOECandidates_ZipCode = ?,	BOECandidates_PetitionID = ?, " .
+#																					"Raw_Voter_UniqNYSVoterID = ?");
