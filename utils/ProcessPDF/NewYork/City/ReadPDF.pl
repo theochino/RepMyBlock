@@ -5,12 +5,22 @@ use CAM::PDF;
 use DBI;
 use Text::Aspell;
 use Term::ANSIColor;
+use Term::TtyWrite;
 
-my $VerbosePrint = 10;
+my $VerbosePrint = 0; 
+my $Verbose = $VerbosePrint;
+my $GoDirectTo = 1090;
+my $ErrorPTS = "/dev/pts/1";
+my $tty;
+my $PrintTTY;
+
+if ( length($ErrorPTS) > 0 ) {
+	open($tty, '>', $ErrorPTS) or die "Could not open file '$ErrorPTS' $!";
+	$PrintTTY = 1;
+}
 
 my $DBPrivacy = "dbi:mysql:NYSVoters:192.168.199.157:3306", my $DBUsername = "root", my $DBPassword = "root";	
 my $dbhPrim = DBI->connect($DBPrivacy, $DBUsername, $DBPassword) or die "Connection Error: $DBI::errstr\n";
-
 
 my $sth_FindLastDate = $dbhPrim->prepare("SELECT * FROM NYSVoters.Raw_Voter_Dates ORDER BY Raw_Voter_Dates_Date DESC LIMIT 1");
 my @row = $sth_FindLastDate->fetchrow_array();
@@ -32,10 +42,10 @@ my $sth_AddCandidates = $dbhPrim->prepare("INSERT INTO BOECandidates SET " .
 my $file_name = shift;
 my $pdf = CAM::PDF->new($file_name);
 
-print "File: $file_name\n";
+print "File: $file_name\n" if ($VerbosePrint > 2);
 my $NumberOfPages = $pdf->numPages();
 
-print "Number: " . $NumberOfPages . "\n";
+print "Number: " . $NumberOfPages . "\n" if ($VerbosePrint > 2);
 
 my $LongString = "";
 
@@ -74,10 +84,8 @@ for (my $i = 0; $i < @Words; $i++) {
 	$TotalWords = $i;
 }
 
-print "Total Words: $TotalWords\n";
-
-
-print "\nforeach output:\n";
+print "Total Words: $TotalWords\n"  if ($VerbosePrint > 2);
+print "\nforeach output:\n" if ($VerbosePrint > 2);
 foreach my $key (keys %HashWordCount) {
   # do whatever you want with $key and $value here ...
   my $value = $HashWordCount{$key};
@@ -219,7 +227,26 @@ for (my $j = 0; $j < $TotalWords; $j++) {
 	if ($MyMarkerFound == 0) {
 		$WordType[$j] = "ignore";
 	}
+	
+	if ( $Words[$j] eq "Petition-Designating") {
+		### Try to find the next.
+		### 41149       Word: Petition-Designating      Type: description
+		### 41150       Word: NY19002   Type: description
+		### 41151       Word: 11        Type: description
+		my $WentTroughtTheLoop = 0;
 
+		# This is a bad glue but it will work for 2019.
+		for(my $k = $j; $j < $TotalWords && $WordType[$k] ne "date" && ! ($Words[$k] =~ m/(([NY]|[KG]|[QN]|[BX]|[RH])\d{7})/); $k++) {
+			$WentTroughtTheLoop = 1;
+			
+			if ($Words[$k] =~ m/(([NY]|[KG]|[QN]|[BX]|[RH]))/) {
+				$Words[$k] = $Words[$k] . $Words[($k+1)];
+				$WordType[$k] = "petition";
+				$Words[($k+1)] = "";
+				$WordType[($k+1)] = "ignore";
+			}
+		}
+	}
 }
 	
 
@@ -256,16 +283,46 @@ my $LocalCountToNext = 0;
 
 my $PrevOffice = "";
 my $PrevOfficePosition = "";
+my $Prev_FinalCounter = -1;
+my $jatstart = -1;
 
 ### This is the middle.
+
+
 for (my $j = 0; $j < $TotalWords; $j++) {
+	
+	if ( $FinalCandidateCounter < $GoDirectTo - 100 ) { $VerbosePrint = 0; } else { $VerbosePrint = $Verbose; }
+	
 	if ( $WordType[$j] ne "ignore") {
 		if ( $VerbosePrint > 5 ) {
 			print "\n### FinalCandidateCounter: " . color("bright_cyan") . $FinalCandidateCounter . color("reset") . "\n";
-			print "################# BEG Word $j of $TotalWords #### Word: " . $Words[$j] . " Type: " . $WordType[$j] . " ##########\n";		
+			print "################# BEG Word " . color("bright_red") . $j .  color("reset") . " of $TotalWords #### Word: ". color("bright_green") . $Words[$j] . color("reset") . " Type: " . color("bright_green") . $WordType[$j] . color("reset") . " ##########\n";		
 			print "FoundTop: " . color("bright_cyan") . $FoundTop . color("reset") . " FoundAddress: " . color("bright_cyan") . $FoundAddress . color("reset") . " FoundDesc: " . color("bright_cyan") . $FoundDesc . color("reset") . "\n";
 		}
 		
+		
+		if ($PrintTTY == 1 && $VerbosePrint > 8) {
+			if ($Prev_FinalCounter != $FinalCandidateCounter) {	$jatstart= $j; } ### This is just so I can highlist.
+			print $tty "### FinalCandidateCounter: " . color("bright_cyan") . $FinalCandidateCounter . color("reset") . "\n";
+			print $tty color("bright_yellow") . "### J: " . color("reset") . color("bright_red") . $jatstart . color("reset") . " to " .  color("bright_red") . $LocalCountToNext . color("reset")   . "\n";
+
+			for (my $k = $jatstart; $k < $LocalCountToNext + 50; $k++) {
+				
+				if ($k == $j) {
+					print $tty  color("on_black") . "### " . color("bright_cyan") . $k . color("reset") .  color("on_black") . "\tWord: " . color("bright_cyan") . $Words[$k] . color("reset") . 
+										color("on_black") .	"\tType: " . color("bright_cyan") . $WordType[$k] . color("reset")  ."\n";
+				} else {
+					print $tty "### " . color("bright_cyan") . $k . color("reset") . "\tWord: " . color("bright_cyan") . $Words[$k] . color("reset") . 
+											"\tType: " . color("bright_cyan") . $WordType[$k] . color("reset") ."\n";
+				}
+			}
+			print $tty "\n";
+		}
+		$Prev_FinalCounter = $FinalCandidateCounter;
+		
+		#print "PREV: $Prev_FinalCounter != FINAL: $FinalCandidateCounter\n";
+		#<STDIN>;	 
+
 		if ( length($FinalPostionString[$FinalCandidateCounter]) > 0 && length($FinalDistrict[$FinalCandidateCounter]) > 0 &&
 					length($FinalParty[$FinalCandidateCounter]) > 0 && length($FinalFullName[$FinalCandidateCounter]) > 0 &&
 					length($FinalAddress[$FinalCandidateCounter]) > 0 && length($FinalZipcode[$FinalCandidateCounter]) > 0 &&
@@ -284,8 +341,7 @@ for (my $j = 0; $j < $TotalWords; $j++) {
 						$LocalCountToNext = $l;
 						$BreakLoop = 1;
 					}
-				}
-				print color("bright_red") . "LocalCountToNext: $LocalCountToNext\n" . color("reset");				
+				}	
 			}
 			$OfficePositionString = ""; $OfficeDistrict = ""; $OfficeParty = ""; 
 			$OfficeFullName = "";	$OfficeAddress = ""; 	$OfficePetitionID = ""; 
@@ -345,27 +401,38 @@ for (my $j = 0; $j < $TotalWords; $j++) {
 			print "FoundTop: " . color("bright_cyan") . $FoundTop . color("reset") . " FoundAddress: " . color("bright_cyan") . $FoundAddress . color("reset") . " FoundDesc: " . color("bright_cyan") . $FoundDesc . color("reset") . "\n";
 			print "\n### FinalCandidateCounter: " . color("bright_cyan") . $FinalCandidateCounter . color("reset") . "\n";
 			print "################# END Word $j of $TotalWords #### Word: " . $Words[$j] . " Type: " . $WordType[$j] . " ##########\n\n";
-			if ($VerbosePrint > 8) { <STDIN>; }
+			
+			
+			### This is to jump directly to debug
+			if ($VerbosePrint > 8) { 
+				if ( $FinalCandidateCounter > $GoDirectTo) {
+					<STDIN>;
+				}
+			}
+			
+			
 		}
 	}
-	
 }
+
+
+
 
 print "Final Candidate Counter: $FinalCandidateCounter\n";
 
 my $TotalFinal = 0;
 for (my $i = 0; $i < $FinalCandidateCounter; $i++) {
-	#if (  length($FinalPostionString[$i]) > 0 ) {
+	
+	### Some cleanup required because it double.
+	### This will need to be removed.
+	if ($FinalPostionString[$i] =~ /County Committee County Committee/) {
+		$FinalPostionString[$i] = "County Committee";		
+		$FinalDistrict[$i] =~ /([^ ]*) .*/;
+		$FinalDistrict[$i] = $1;
+	}
+	
+	if ( length ($FinalParty[$i]) > 0) {
 		$TotalFinal++;
-		#print "\nI: $i\n";
-		#print "Office Position: " . $FinalPostionString[$i] . "\t";
-		#print "Office District: " . $FinalDistrict[$i] . "\t";
-		#print "Office Party: " . uc(substr($FinalParty[$i], 0, 3)) . "\t";
-		#print "Candidate Name: " . $FinalFullName[$i] . "\t";
-		#print "Candidate Address: " . $FinalAddress[$i] . "\t";
-		#print "Candidate Zipcode: " . $FinalZipcode[$i] . "\t";
-		#print "Petition ID: " . $FinalPetitionID[$i] . "\t";
-		#print "Description: " . $FinalDescription[$i] . "\n";
 		
 		print $i . "\t";
 		print $FinalPostionString[$i] . "\t";
@@ -375,16 +442,15 @@ for (my $i = 0; $i < $FinalCandidateCounter; $i++) {
 		print $FinalAddress[$i] . "\t";
 		print $FinalZipcode[$i] . "\t";
 		print $FinalPetitionID[$i] . "\t";
-		print $FinalDescription[$i] . "\n";
-		
-		### Here is the check of the Full Name and trying to find it.
-		###	$sth_NameIndex 
-		
-		### Remove this DB call. Print to file then use another script.s
-		#$sth_AddCandidates->execute($FinalPostionString[$i], 
-		#														$FinalDistrict[$i], uc(substr($FinalParty[$i], 0, 3)),
-		#														$FinalFullName[$i], $FinalAddress[$i], $FinalZipcode[$i], $FinalPetitionID[$i], "");
-	#}
+		#print $FinalDescription[$i] . "\n";
+	}			
+	### Here is the check of the Full Name and trying to find it.
+	###	$sth_NameIndex 
+	
+	### Remove this DB call. Print to file then use another script.s
+	#$sth_AddCandidates->execute($FinalPostionString[$i], 
+	#														$FinalDistrict[$i], uc(substr($FinalParty[$i], 0, 3)),
+	#														$FinalFullName[$i], $FinalAddress[$i], $FinalZipcode[$i], $FinalPetitionID[$i], "");
 }
 print "\nFinal Candidate Counter: $TotalFinal\n";
 
