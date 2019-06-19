@@ -441,7 +441,7 @@ for (my $i = 0; $i < $FinalCandidateCounter; $i++) {
 		print $FinalFullName[$i] . "\t";
 		print $FinalAddress[$i] . "\t";
 		print $FinalZipcode[$i] . "\t";
-		print $FinalPetitionID[$i] . "\t";
+		print $FinalPetitionID[$i] . "\n";
 		#print $FinalDescription[$i] . "\n";
 	}			
 	### Here is the check of the Full Name and trying to find it.
