@@ -1,5 +1,6 @@
 <?php
 // MYSQL Classes
+
 class db {
 
   var $connect_id;
@@ -14,13 +15,14 @@ class db {
 
     if(empty($user)) {
       // $this->connect_id = mysql_connect(); - Deprecated
-			echo "Database not available ... reporting why.";
+			$error_msg = "Database not available ... reporting why.";
+			header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+			exit();
 			// Put a nagios trigger here
 			exit();
     } else {
 	    // $this->connect_id = mysql_connect($host, $user, $password); - Deprecated
 	    try {     
-	    	    		
 		   	if (! empty ($sslkeys["srvkey"])) {
 		   		$MYSQLOPTIONS = array(
 		   			PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
@@ -48,9 +50,14 @@ class db {
 			}	catch( PDOException $e ) {
 				$this->SaveError ($e->getMessage(), $sql, $sql_vars, $DebugInfo);
 	   		if ( $DebugInfo["Flag"] > 0 ) {
-					echo "Failed to get DB handle: " . $e->getMessage() . "\n";
-				} else { 
-					echo "Error with the Database. Admin already notified. Please try in one hour.<BR>";
+					$error_msg ="Failed to get DB handle: " . $e->getMessage() . "\n";
+					header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+					exit();
+			} else { 
+					$error_msg = "Error with the Database. Admin already notified. " . 
+												"Please try in one hour.";
+					header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+					exit();
 				}
 	   		exit;
 			}
@@ -79,10 +86,14 @@ class db {
 	    }	catch( PDOException $e ) {
 				$this->SaveError ($e->getMessage(), $sql, $sql_vars, $DebugInfo);
 	    	if ( $DebugInfo["Flag"] > 0 ) {
-					echo "Failed to get DB handle: " . $e->getMessage() . "\n";
+					$error_msg =  "Failed to get DB handle: " . $e->getMessage();
+					header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+					exit();
 				} else { 
 					$this->SaveError ($e->getMessage(), $sql, $sql_vars, $DebugInfo);
-					echo "Error with the Database. Admin already notified. Please try in one hour.<BR>";
+					$error_msg =  "Error with the Database. Admin already notified. Please try in one hour.";
+					header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+					exit();
 				}
 				// Put a nagios trigger here
 	    	exit;
@@ -98,9 +109,15 @@ class db {
 	     	} catch( PDOException $e ) {
 					$this->SaveError ($e->getMessage(), $sql, $sql_vars, $DebugInfo);
 		    	if ( $DebugInfo["Flag"] > 0 ) {
-						echo "Failed to get DB handle: " . $e->getMessage() . "\n";
+						$error_msg =  "Failed to get DB handle: " . $e->getMessage();
+						header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+						exit();
+
 					} else { 
-						echo "Error with the Database. Admin already notified. Please try in one hour.<BR>";
+						$error_msg =  "Error with the Database. Admin already notified. " .
+													"Please try in one hour.";
+						header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
+						exit();
 					}
 					// Put a nagios trigger here
 		    	exit;
@@ -140,12 +157,16 @@ class db {
 													$DebugInfo["Flag"] . ": " . $sql . "\n";
 										
 			if ( ! @file_put_contents ( $DebugInfo["DBErrorsFilename"] , $TransData ,  FILE_APPEND | LOCK_EX )) {
-				echo "There was a problem with saving file and the transaction did not go trough<BR>";
-				echo "Transaction: " . $DebugInfo["DBErrorsFilename"] . "<BR>";
+				$error_msg =  "There was a problem with saving file and the transaction did not go trough<BR>" .
+										  "Transaction: " . $DebugInfo["DBErrorsFilename"];
+				header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
 				exit();
 			}
 		}
-		echo "Error with the Database. Admin already notified. Please try in one hour.<BR>";
+		
+#		require_once $_SERVER["DOCUMENT_ROOT"] . "/../libs/common/verif_sec.php";	
+		$error_msg =  "Error with the Database. Admin already notified. Please try in one hour.";
+		header("Location: /error/?k=" . EncryptURL("error_msg=" . $error_msg));
 		exit();
 	}
 

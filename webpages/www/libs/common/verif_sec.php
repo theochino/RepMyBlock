@@ -74,10 +74,13 @@ function EncryptURL($string = "") {
   }
   
   for ($loop = 0; $loop < $blockct; $loop++) {
-    $blocktext = substr($MyString, $loop * 245, 245);
+    $blocktext = substr($MyString, $loop * 245, 245);    
     openssl_public_encrypt($blocktext, $encblocktext, $PubKey);
     $encpayload .= $encblocktext;
   }
+  
+ 
+  
   
   return(rawurlencode(base64_encode (pack ("Na*", $blockct, $encpayload))));
 }
@@ -96,7 +99,10 @@ function DecryptURL ( $sealed ) {
   
   for ($loop=0;$loop < $blockct;$loop++) {
     $blocktext = substr($encpayload, $loop*256, 256);
-    openssl_private_decrypt($blocktext, $decblocktext, $PrivKey);
+    if ( openssl_private_decrypt($blocktext, $decblocktext, $PrivKey) != 1) {
+			header("Location: /error/?crd=1");
+			exit();
+    }
     $finaltext .= $decblocktext;
   }
 
