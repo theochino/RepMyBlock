@@ -6,6 +6,12 @@
 <html lang="en-US" prefix="og: http://ogp.me/ns#" class="no-js">
 	<HEAD>
 		<META charset="UTF-8">
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:description" content="Registrations for the 2020 county committee cycle in the Bronx, Queens and Brooklyn have started. Registration for the 2021 county committee cycle in Manhattan and Staten Island have started. Get your nominating petition kit here! HOW DOES IT WORKS The County Committee is the most basic committee of the Democratic Party; its its backbone. The &hellip; Continue reading Rep My Block &rarr;" />
+		<meta name="twitter:title" content="Rep My Block - Rep My Block" />
+		<meta name="twitter:site" content="@RepMyBlock" />
+		<meta name="twitter:image" content="https://static.repmyblock.nyc/pics/paste/PoliticalMachineKeepEngagementLow.jpg" />
+		<meta name="twitter:creator" content="@RepMyBlock" />
 		<TITLE>Rep My Block - Represent My Block - Nominate A Candidate</TITLE>
 		<link rel="icon" href="/pics/favicon/favicon.ico" type="image/x-icon">
 		<link rel="shortcut icon" href="/pics/favicon/favicon.ico" type="image/x-icon">
