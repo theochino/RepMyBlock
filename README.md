@@ -1,6 +1,8 @@
 # OutragedDems
 Website to put an end to the Society of St. Tammany in New York City.
 
+If you want to help in the devellopement of the project, check the Wiki section of GitHub: https://github.com/theochino/RepMyBlock/wiki
+
 Great history: https://en.wikipedia.org/wiki/Tammany_Hall<BR>
 Martin Scorsese made a movie that illustrated the power of the Society of St. Tammany while everyone was fighting: https://youtu.be/NUco72Sxokk
 
