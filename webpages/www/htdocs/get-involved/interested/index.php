@@ -41,13 +41,13 @@
 </P>
 		
 <P>
-	The first step in being your block representative in the Democratic party is to verify that 
-	you are registered to vote as a Democrat.
+	<B>The first step in being your party block representative is to verify your voter registration.</B><BR>
+	
 </P>
 
 <P>
-	<B><A HREF="<?= $FrontEndWebsite ?>/county-committee">This link explains in more 
-	details the role of the County Committee</A>.</B>
+	<A HREF="<?= $FrontEndWebsite ?>/county-committee">This link explains in more 
+	details the role of the County Committee</A>.
 </P>
 
 <?php if (! empty ($error_msg)) { ?>
@@ -93,6 +93,10 @@
 	</FORM>
 </div> 
 
+<P>
+<I>Each month we request  the complete New York State voter registration file using the Freedom of Information Law.<BR>
+			<B>We ask for your date of birth in order to find your individual voting record.</B></I>
+</P>
 </DIV>
 
 <?php include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/footer.php"; ?>
