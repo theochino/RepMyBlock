@@ -17,7 +17,7 @@
 
 <P>
 	Did you register with the Board of Election after <?= date('d/m/Y', strtotime( $DatedFiles )) ?>?<BR>
-	Are you a New York State Registered voter in one of <B>New York State Recognized Parties</B>?
+	Are you a New York State Registered voter in one of <B>Recognized Parties</B>?
 </P>
 
 <P>
