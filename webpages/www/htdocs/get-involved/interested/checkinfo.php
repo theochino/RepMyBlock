@@ -49,16 +49,24 @@
 				exit();
 			}
 			
+			echo "Found multiple entry:<BR>";
+			print "<PRE>";
+			print_r($result);
+			print "</PRE>";
+			exit();
+			
 			$URL = "/get-involved/interested/iaminterestedtorunmorethanone.php?k=" . encryptURL("&Email=" . $Email . "&FN=" . $FirstName . "&LN=" . $LastName . "&DOB=" . $DateOfBirth);
 			header("Location: $URL");
 			exit();
 		}
 		
+		/*
 		if ( $result[0]["Raw_Voter_RegParty"] != "DEM") {
 			$URL = "/get-involved/interested/notdem/?k=" . encryptURL("VotersIndexes_UniqNYSVoterID=" . $result[0]["VotersIndexes_UniqNYSVoterID"]);
 			header("Location: $URL");
 			exit();
 		}
+		*/
 						
 		$URL = "/get-involved/interested/getinfo/?k=" . encryptURL("UniqNYSID=" . $result[0]["VotersIndexes_UniqNYSVoterID"]);
 		header("Location: $URL");

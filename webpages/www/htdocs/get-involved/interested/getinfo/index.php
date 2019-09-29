@@ -32,7 +32,7 @@
 	$AssemblyDistrict = $ResultVoter["Raw_Voter_AssemblyDistr"];
 	
 	$r = new maps();
-	$result = $r->CountRawVoterbyADED($DatedFiles, $AssemblyDistrict, $ElectionDistrict);
+	$result = $r->CountRawVoterbyADED($DatedFiles, $AssemblyDistrict, $ElectionDistrict, $ResultVoter["Raw_Voter_EnrollPolParty"]);
 	$RawVoterID = $ResultVoter["Raw_Voter_ID"];
 	
 	$GeoDescAbbrev = sprintf("%'.02d%'.03d", $AssemblyDistrict, $ElectionDistrict);
@@ -58,6 +58,7 @@
 								"&LastName=" . ucwords(strtolower($ResultVoter["Raw_Voter_LastName"])));
 	
 	include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/headers.php";							
+	$PartyEnrolled = NewYork_PrintParty($ResultVoter["Raw_Voter_EnrollPolParty"]);
 ?>
 
 <div class="main">
@@ -99,7 +100,7 @@
 							  	 
 			  <div class="column" style="background-color:#aaa;">
 			  	
-			  	 <h2>Democrat Electors in: 
+			  	 <h2><?= $PartyEnrolled ?> Electors in: 
 			    <?= $NumberOfElectors ?></h2>
 			    <h2>Required Signatures:
 			    <?= $NumberOfSignatures ?></H2>

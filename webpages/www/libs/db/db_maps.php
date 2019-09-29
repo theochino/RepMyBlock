@@ -18,12 +18,12 @@ class maps extends queries {
 		return $this->_return_nothing($sql,  $sql_vars);
 	}
 	
-	function CountRawVoterbyADED($DatedFiles, $ADist, $EDist) {
+	function CountRawVoterbyADED($DatedFiles, $ADist, $EDist, $Party = "BLK") {
 		$TableVoter = "Raw_Voter_" . $DatedFiles;
 		$sql = "SELECT COUNT(*) as TotalVoters FROM " . $TableVoter . " WHERE " . 
 		"Raw_Voter_AssemblyDistr = :AssDist AND Raw_Voter_ElectDistr = :ElectDist " . 
-		"AND Raw_Voter_EnrollPolParty = 'DEM' AND Raw_Voter_Status = 'ACTIVE'";	
-		$sql_vars = array('AssDist' => $ADist, 'ElectDist' => $EDist);							
+		"AND Raw_Voter_EnrollPolParty = :Party AND Raw_Voter_Status = 'ACTIVE'";	
+		$sql_vars = array('AssDist' => $ADist, 'ElectDist' => $EDist, 'Party' => $Party);							
 		return $this->_return_simple($sql, $sql_vars);
 	}
 	
