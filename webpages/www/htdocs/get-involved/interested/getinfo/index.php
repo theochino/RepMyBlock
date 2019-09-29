@@ -59,6 +59,14 @@
 	
 	include $_SERVER["DOCUMENT_ROOT"] . "/get-involved/headers/headers.php";							
 	$PartyEnrolled = NewYork_PrintParty($ResultVoter["Raw_Voter_EnrollPolParty"]);
+	
+	print "What is going on: UniqNYSID=" . $UniqNYSID . 
+								"&ElectionDistrict=" . $ElectionDistrict . "&AssemblyDistrict=" . $AssemblyDistrict . 
+								"&FirstName=" . ucwords(strtolower($ResultVoter["Raw_Voter_FirstName"])) . 
+								"&LastName=" . ucwords(strtolower($ResultVoter["Raw_Voter_LastName"]));
+
+	echo "<BR>URLAction:" . $URLAction  . "<BR>";
+	
 ?>
 
 <div class="main">

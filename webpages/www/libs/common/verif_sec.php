@@ -56,31 +56,35 @@ if ($CalculatePHPSelf == 1) {
 	}
 }
 
-function EncryptURL($string = "") {  
+function EncryptURL($string = "") {  	
 	global $PubKey;
   openssl_get_publickey($PubKey);
-
+   
   $MyString = "LastTimeUser=" . time();
   if ( ! empty ($string)) {
   	$MyString .= "&" . $string;
   }
-  
+    
 	$SizeMessage = strlen($MyString);
   $encpayload = "";
+  $blocktext = "";
 
-  $blockct = intval( $SizeMessage / 245 )  + 1;
-  if (( $SizeMessage % 245 ) == 0 ) {
+	$BlockSize = 245;
+
+  $blockct = intval( $SizeMessage / $BlockSize )  + 1;
+  if (( $SizeMessage % $BlockSize ) == 0 ) {
   	$blockct--;
   }
   
   for ($loop = 0; $loop < $blockct; $loop++) {
-    $blocktext = substr($MyString, $loop * 245, 245);    
-    openssl_public_encrypt($blocktext, $encblocktext, $PubKey);
+    $blocktext = substr($MyString, $loop * $BlockSize, $BlockSize);    
+    if ( ! openssl_public_encrypt($blocktext, $encblocktext, $PubKey)) {
+    	while ($msg = openssl_error_string()) {
+    		echo $msg . "<br />\n";
+    	}
+    }
     $encpayload .= $encblocktext;
   }
-  
- 
-  
   
   return(rawurlencode(base64_encode (pack ("Na*", $blockct, $encpayload))));
 }
@@ -96,16 +100,20 @@ function DecryptURL ( $sealed ) {
   $blockct = $arr['blockct'];
   $encpayload=$arr[1];
   $decmessage = "";
+  $BlockSize = 256;
   
   for ($loop=0;$loop < $blockct;$loop++) {
-    $blocktext = substr($encpayload, $loop*256, 256);
+    $blocktext = substr($encpayload, $loop * $BlockSize,  $BlockSize);
     if ( openssl_private_decrypt($blocktext, $decblocktext, $PrivKey) != 1) {
+    	while ($msg = openssl_error_string()) {
+    		echo $msg . "<br />\n";
+    	}
 			header("Location: /error/?crd=1");
 			exit();
     }
     $finaltext .= $decblocktext;
   }
-
+  
   return($finaltext);
 }
 

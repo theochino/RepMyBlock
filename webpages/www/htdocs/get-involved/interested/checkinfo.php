@@ -23,7 +23,7 @@
 
 		if ( $CountResult == 0) {
 			$URL = "/get-involved/interested/notfound/?k=" . 
-							encryptURL("Email=" . $Email . "&FN=" . $FirstName . "&LN=" . $LastName . "&DOB=" . $DateOfBirth);
+							EncryptURL("Email=" . $Email . "&FN=" . $FirstName . "&LN=" . $LastName . "&DOB=" . $DateOfBirth);
 			header("Location: $URL");
 			exit();
 		}
@@ -44,7 +44,7 @@
 			}
 			
 			if ( $IamOkForOne == 1) {
-				$URL = "/get-involved/interested/getinfo/?k=" . encryptURL("UniqNYSID=" . $var["Raw_Voter_UniqNYSVoterID"]);
+				$URL = "/get-involved/interested/getinfo/?k=" . EncryptURL("UniqNYSID=" . $var["Raw_Voter_UniqNYSVoterID"]);
 				header("Location: $URL");
 				exit();
 			}
@@ -55,7 +55,7 @@
 			print "</PRE>";
 			exit();
 			
-			$URL = "/get-involved/interested/iaminterestedtorunmorethanone.php?k=" . encryptURL("&Email=" . $Email . "&FN=" . $FirstName . "&LN=" . $LastName . "&DOB=" . $DateOfBirth);
+			$URL = "/get-involved/interested/iaminterestedtorunmorethanone.php?k=" . EncryptURL("&Email=" . $Email . "&FN=" . $FirstName . "&LN=" . $LastName . "&DOB=" . $DateOfBirth);
 			header("Location: $URL");
 			exit();
 		}
@@ -68,7 +68,7 @@
 		}
 		*/
 						
-		$URL = "/get-involved/interested/getinfo/?k=" . encryptURL("UniqNYSID=" . $result[0]["VotersIndexes_UniqNYSVoterID"]);
+		$URL = "/get-involved/interested/getinfo/?k=" . EncryptURL("UniqNYSID=" . $result[0]["VotersIndexes_UniqNYSVoterID"]);
 		header("Location: $URL");
 		exit();
 	}
