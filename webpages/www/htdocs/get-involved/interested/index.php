@@ -46,8 +46,7 @@
 </P>
 
 <P>
-	<A HREF="<?= $FrontEndWebsite ?>/county-committee">This link explains in more 
-	details the role of the County Committee</A>.
+	<A HREF="<?= $FrontEndWebsite ?>/county-committee">This link explains in more detail the role of the County Committee</A>.
 </P>
 
 <?php if (! empty ($error_msg)) { ?>
