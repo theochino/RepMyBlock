@@ -1,4 +1,4 @@
-# OutragedDems
+# RepMyBlock
 Website to put an end to the Society of St. Tammany in New York City.
 
 If you want to help in the devellopement of the project, check the Wiki section of GitHub: https://github.com/theochino/RepMyBlock/wiki
