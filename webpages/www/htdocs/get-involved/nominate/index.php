@@ -17,7 +17,7 @@
 		$CandidateNomin = "";	$print_nominate = 0;
 		$CandidateSelf = ""; $print_self = 0;
 		
-		echo "<B>DecryptedLIne:</B> " .  $_SERVER['DOCUMENT_URI'] .  "<UL>$Decrypted_k</UL>";				
+		//echo "<B>DecryptedLIne:</B> " .  $_SERVER['DOCUMENT_URI'] .  "<UL>$Decrypted_k</UL>";				
 		$ListCandidates = $p->ListCandidateNomination($SystemUser_ID);
 		
 		// Need to check out the list.

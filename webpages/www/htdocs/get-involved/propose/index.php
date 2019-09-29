@@ -32,14 +32,14 @@
 </P>
 
 <P>
-	This tool will help you nominate democrats that have expressed interest in running 
+	This tool will help you nominate candidates that have expressed interest in running 
 	in New York City. Many of the candidates are unheard because the current system is
 	based on a pay to play system.
 </P>
 
 <P>
-	In order to nominate a candidate, you need to be a <B>registered voter in the Democratic party</B> 
-	in New York State.
+	In order to nominate a candidate, you need to be a <B>registered voter in the party</B> 
+	you are nominating the candidate.
 </P>
 
 <P>
