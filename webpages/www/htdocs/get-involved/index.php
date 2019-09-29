@@ -53,11 +53,13 @@
 	<P CLASS="BckGrndElement">HOW IT WORKS</P>
 
 	<P>
-		The County Committee is the most basic committee of the Democratic Party; its its backbone. 
+		<B>The County Committee is the most basic committee of any New York party; it's their backbone.</B>
 	</P>
 	
 	<P>	
-		The County Committee is the most basic committee of the Democratic Party; its its backbone as it selects the local platform and the candidates that will represent our values. Many registered Democrats dont even know its existence. Its the body that validates the party backroom deals. 
+		The County Committee is the most basic committee of any New York party; it's the backbone because it selects the local platform and 
+		the candidates that will represent our values. Many registered Democrats dont even know its existence. 
+		It's the body that validates the party backroom deals. 
 	</P>
 	
 	<P CLASS="MediaCenter">
@@ -65,7 +67,7 @@
 	</P>
 
 	<P>
-		The time commitment is 40 hours a year.
+		<B>The time commitment is about 40 hours a year.</B>
 	</P>
 
 </div>
